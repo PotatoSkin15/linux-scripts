@@ -38,7 +38,15 @@ else
 
 		if [ "$stack" == "y" ]; then
 			# Basics for Linux servers, LAMP stack
-			yum -y install httpd mariadb mariadb-server php php-common php-gd php-xmlrpc php-xml expect
+			yum -y install httpd httpd-tools mariadb mariadb-server php php-common php-gd php-xmlrpc php-xml expect openssl openssl-devel
+			
+			# Start Apache2 and MariaDB servers w/ Systemd
+			systemctl start httpd
+			systemctl start mariadb
+
+			# Start Apache2 and MariaDB server at startup w/ Systemd
+			systemctl enable httpd
+			systemctl enable mariadb
 		else
 			echo 'Moving on'
 		fi
@@ -49,7 +57,7 @@ else
 	) >> ~/flightcheck_log
 	echo 'Done. Check flightcheck_log for more details'
 
-elif [ "$OS" == "ubuntu" ]; then
+	elif [ "$OS" == "ubuntu" ]; then
 	(
 		# Update everything currently installed
 		apt-get -y update; apt-get -y upgrade
@@ -67,7 +75,15 @@ elif [ "$OS" == "ubuntu" ]; then
 
 		if [ "$stack" == "y" ]; then
 			# Basics for Linux servers, LAMP stack
-			apt-get -y install apache2 mysql-server php php-common php-gd php-xmlrpc php-xml expect
+			apt-get -y install apache2 apache2-utils mysql-server php php-common php-gd php-xmlrpc php-xml expect openssl openssl-devel
+			
+			# Start Apache2 and MySQL servers w/ Systemd
+			systemctl start apache2
+			systemctl start mysql
+
+			# Start Apache2 and MariaDB server at startup w/ Systemd
+			systemctl enable apache2
+			systemctl enable mysql
 		else
 			echo 'Moving on'
 		fi
