@@ -1,33 +1,38 @@
 #!/bin/bash
 
-# Auto generates CSR for sites using 4096-bit SHA2 encryption and temp config file
-# --KP, 09/16/2015
-
 clear
 
 echo "You are currently logged in as $USER"
 echo "Please update authentication credentials"
 sudo -v
 
+# Get domain that SSL cert will be protecting
 echo "What is the FQDN of the site you wish to encrypt?"
 read fqdn
 
+# Organization name
 echo "What is the organization name?"
 read organization
 
+# Contact email, mostly admin@<domain>
 echo "What is the contact email for this cert?"
 read email
 
+# State org is located in
 echo "State?"
 read state
 
+# Country org is located in
 echo "Country?"
 read country
 
+# City org is located in
 echo "City?"
 read city
 
 echo "Generating..."
+
+# Output to a tmp cfg file
 sudo echo " [ req ]
 prompt = no
 default_bits = 4096
@@ -50,8 +55,10 @@ CN=$fqdn
 basicConstraints = CA:FALSE
 keyUsage = nonRepudiation, digitalSignature, keyEncipherment" >> temp-openssl.cfg
 
+# Runs OpenSSL command to generate new csr and key for cert
 sudo openssl req -new -config temp-openssl.cfg -out $fqdn.csr
 
+# Removes tmp file
 sudo rm temp-openssl.cfg
 
 echo "Done. The CSR name is: $fqdn.csr"
