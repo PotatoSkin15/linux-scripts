@@ -27,10 +27,6 @@ else
 		# More basics that should be installed for ease of use
 		yum -y install git vim htop wget openssh net-tools epel-release firewalld
 		
-		# Set default firewall rules via firewalld
-		
-		
-		
 		# Webtatic
 		wget https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
 		rpm --import https://mirror.webtatic.com/yum/RPM-GPG-KEY-webtatic-el7
@@ -85,7 +81,7 @@ else
 
 		if [ "$stack" == "y" ]; then
 			# Basics for Linux servers, LAMP stack
-			apt-get -y install apache2 apache2-utils mysql-server php php-common php-gd php-xmlrpc php-xml expect openssl openssl-devel
+			apt-get -y install apache2 apache2-utils mysql-server php5 php5-common php5-gd php5-xmlrpc php5-xml expect openssl openssl-devel
 				
 			# Starts Apache2 and MariaDB/MySQL with Systemd or init script
 			if [ "$SYS" == "systemd" ]; then
