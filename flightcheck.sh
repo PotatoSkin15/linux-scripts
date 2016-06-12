@@ -5,6 +5,9 @@ clear
 # Check distribution before installing packages
 OS=`grep -Eiom 1 'CentOS|RedHat|Ubuntu' /proc/version`
 
+# Check for Systemd vs sysvinit
+SYS=`ps -p 1 -o cmd h`
+
 # Check if user is root, if not tells them to sudo su
 if [ "$USER" != "root" ]; then
 		echo 'WARNING! This script should be run as root'
@@ -23,7 +26,11 @@ else
 
 		# More basics that should be installed for ease of use
 		yum -y install git vim htop wget openssh net-tools epel-release firewalld
-
+		
+		# Set default firewall rules via firewalld
+		
+		
+		
 		# Webtatic
 		wget https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
 		rpm --import https://mirror.webtatic.com/yum/RPM-GPG-KEY-webtatic-el7
@@ -40,13 +47,16 @@ else
 			# Basics for Linux servers, LAMP stack
 			yum -y install httpd httpd-tools mariadb mariadb-server php php-common php-gd php-xmlrpc php-xml expect openssl openssl-devel
 			
-			# Start Apache2 and MariaDB servers w/ Systemd
-			systemctl start httpd
-			systemctl start mariadb
+			# Starts Apache2 and MariaDB/MySQL with Systemd or init script
 
-			# Start Apache2 and MariaDB server at startup w/ Systemd
-			systemctl enable httpd
-			systemctl enable mariadb
+			if [ "$SYS" == "systemd" ]; then
+				systemctl start httpd && systemctl enable httpd
+				systemctl start mariadb && systemctl enable mariadb
+			elif [ "$SYS" == "sysvinit" ]; then
+				service httpd start && chkconfig httpd on
+				service mariadb start && chkconfig mariadb on
+			fi
+			
 		else
 			echo 'Moving on'
 		fi
@@ -76,14 +86,16 @@ else
 		if [ "$stack" == "y" ]; then
 			# Basics for Linux servers, LAMP stack
 			apt-get -y install apache2 apache2-utils mysql-server php php-common php-gd php-xmlrpc php-xml expect openssl openssl-devel
+				
+			# Starts Apache2 and MariaDB/MySQL with Systemd or init script
+			if [ "$SYS" == "systemd" ]; then
+				systemctl start apache2 && systemctl enable apache2
+				systemctl start mysql && systemctl enable mysql
+			elif [ "$SYS" == "sysvinit" ]; then
+				service apache2 start && chkconfig apache2 on
+				service mysql start && chkconfig mysql on
+			fi
 			
-			# Start Apache2 and MySQL servers w/ Systemd
-			systemctl start apache2
-			systemctl start mysql
-
-			# Start Apache2 and MariaDB server at startup w/ Systemd
-			systemctl enable apache2
-			systemctl enable mysql
 		else
 			echo 'Moving on'
 		fi
