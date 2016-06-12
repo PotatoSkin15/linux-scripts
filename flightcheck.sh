@@ -14,7 +14,7 @@ if [ "$USER" != "root" ]; then
 		echo 'Please enter sudo su and run the script again'
 else
 	if [ "$OS" == "centos" -a "redhat" ]; then
-	(
+	{
 	  # Update everything currently installed
 		yum -y update
 
@@ -33,14 +33,14 @@ else
 		rpm -K webtatic-release.rpm
 		rpm -Uvh webtatic-release.rpm
 		yum update
-
+	} > ~/flightcheck_log
 		# Prompt if LAMP stack needed
 
 		echo 'Is a LAMP stack required? [y/n]'
 		read stack
-
+	
 		if [ "$stack" == "y" ]; then
-			# Basics for Linux servers, LAMP stack
+	{		# Basics for Linux servers, LAMP stack
 			yum -y install httpd httpd-tools mariadb mariadb-server php php-common php-gd php-xmlrpc php-xml expect openssl openssl-devel
 			
 			# Starts Apache2 and MariaDB/MySQL with Systemd or init script
@@ -52,19 +52,19 @@ else
 				service httpd start && chkconfig httpd on
 				service mariadb start && chkconfig mariadb on
 			fi
-			
+	} >> ~/flightcheck_log		
 		else
 			echo 'Moving on'
 		fi
-
+	{
 		# Install development tools
 		yum -y groupinstall "Development tools"
-
-	) >> ~/flightcheck_log
+	} >> ~/flightcheck_log
+	
 	echo 'Done. Check flightcheck_log for more details'
 
 	elif [ "$OS" == "ubuntu" ]; then
-	(
+	{
 		# Update everything currently installed
 		apt-get -y update; apt-get -y upgrade
 
@@ -75,10 +75,10 @@ else
 		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
 
 		# Prompt if LAMP stack is required
-
+	} > ~/flightcheck_log
 		echo 'Is a LAMP stack required? [y/n]'
 		read stack
-
+	{
 		if [ "$stack" == "y" ]; then
 			# Basics for Linux servers, LAMP stack
 			apt-get -y install apache2 apache2-utils mysql-server php5 php5-common php5-gd php5-xmlrpc php5-xml expect openssl openssl-devel
@@ -91,15 +91,15 @@ else
 				service apache2 start && chkconfig apache2 on
 				service mysql start && chkconfig mysql on
 			fi
-			
+	} >> ~/flightcheck_log
 		else
 			echo 'Moving on'
 		fi
-
+	{
 		# Install development tools
 		apt-get -y install build-essentials
 
-	) >> ~/flightcheck_log
+	} >> ~/flightcheck_log
 		echo 'Done. Check flighcheck_log for more details'
 	else
 		echo 'Supported OS Not Detected'
