@@ -13,7 +13,7 @@ if [ "$USER" != "root" ]; then
 		echo 'WARNING! This script should be run as root'
 		echo 'Please enter sudo su and run the script again'
 else
-	if [ "$OS" == "centos" -a "redhat" ]; then
+	if [ "$OS" == "centos" -a "redhat" -a "fedora" ]; then
 	{
 	  # Update everything currently installed
 		yum -y update
