@@ -35,7 +35,7 @@ else
             # Starts Apache2 with Systemd or init script
             if [ "$SYS" == "systemd" ]; then
               systemctl start httpd && systemctl enable httpd
-            elif [ "$SYS" == "sysvinit" ]; then
+            elif [ "$SYS" == '/sbin/init' ]; then
               service httpd start && chkconfig httpd on
             fi
           fi } >> ~/hydration_log
@@ -47,7 +47,7 @@ else
             # Starts Apache2 with Systemd or init script
             if [ "$SYS" == "systemd" ]; then
               systemctl start apache2 && systemctl enable apache2
-            elif [ "$SYS" == "sysvinit" ]; then
+            elif [ "$SYS" == '/sbin/init' ]; then
               service apache2 start && chkconfig apache2 on
             fi
           fi } >> ~/hydration_log
@@ -62,7 +62,7 @@ else
             if [ "$SYS" == "systemd" ]; then
               systemctl start nginx && systemctl enable nginx
               systemctl start php-fpm && systemctl enable php-fpm
-            elif [ "$SYS" == "sysvinit" ]; then
+            elif [ "$SYS" == '/sbin/init' ]; then
               service nginx start && chkconfig nginx on
               service php-fpm start && chkconfig nginx on
             fi
@@ -80,7 +80,7 @@ else
             # Starts MariaDB/MySQL with Systemd or init script
             if [ "$SYS" == "systemd" ]; then
               systemctl start mysql && systemctl enable mysql
-            elif [ "$SYS" == "sysvinit" ]; then
+            elif [ "$SYS" == '/sbin/init' ]; then
               service mysql start && chkconfig mysql on
             fi
           fi } >> ~/hydration_log
@@ -93,7 +93,7 @@ else
             # Starts MariaDB/MySQL with Ssytemd or init script
             if [ "$SYS" == "systemd" ]; then
               systemctl start mysql && systemctl enable mysql
-            elif [ "$SYS" == "sysvinit" ]; then
+            elif [ "$SYS" == '/sbin/init' ]; then
               service mysql start && chkconfig mysql on
             fi
           fi } >> ~/hydration_log
@@ -111,7 +111,7 @@ else
           # Starts PGSQL with Systemd or init script
           if [ "$SYS" == "systemd" ]; then
             systemctl start postgresql && systemctl enable postgresql
-          elif [ "$SYS" == "sysvinit" ]; then
+          elif [ "$SYS" == '/sbin/init' ]; then
             service postgresql start && chkconfig postgresql on
           fi
         fi } >> ~/hydration_log
@@ -124,7 +124,7 @@ else
           # Starts PGSQL with systemd or init script
           if [ "$SYS" == "systemd" ]; then
             systemctl start postgresql && systemctl enable postgresql
-          elif [ "$SYS" == "sysvinit" ]; then
+          elif [ "$SYS" == '/sbin/init' ]; then
             service postgresql start && chkconfig postgresql on
           fi
         fi } >> ~/hydration_log
