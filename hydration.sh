@@ -25,11 +25,18 @@ else
 
   case $task in
     1)
-      echo "Apache or nginx? [a/n]"
-      read webserver
+			clear
+			cat << EOF
+			Select webserver:
+			a) Apache
+			n) nginx
+			EOF
 
-      if [ "$webserver" == "a" ]; then
-        if [ "$OS" == "centos" -a "redhat" ]; then
+			read webserver
+
+			case $webserver in
+				a)
+        if [ "$OS" == "centos" -a "redhat" -a "fedora" ]; then
           { # Installs base Apache stack
           yum -y install httpd httpd-tools php php-common php-gd php-xmlrpc php-xml openssl openssl-devel
             # Starts Apache2 with Systemd or init script
@@ -37,8 +44,7 @@ else
               systemctl start httpd && systemctl enable httpd
             elif [ "$SYS" == '/sbin/init' ]; then
               service httpd start && chkconfig httpd on
-            fi
-          fi } >> ~/hydration_log
+            fi } >> ~/hydration_log
           echo "Apache successfully installed with OpenSSL and PHP"
           echo "Check hydration_log for more details"
         elif [ "$OS" == "ubuntu" ]; then
@@ -49,12 +55,13 @@ else
               systemctl start apache2 && systemctl enable apache2
             elif [ "$SYS" == '/sbin/init' ]; then
               service apache2 start && chkconfig apache2 on
-            fi
-          fi } >> ~/hydration_log
+            fi } >> ~/hydration_log
           echo "Apache successfully installed with OpenSSL and PHP"
           echo "Check hydration_log for more details"
+				fi
+				;;
 
-      elif [ "$webserver" == "n" ]; then
+      	n)
         if [ "$OS" == "centos" -a "redhat" ]; then
           { # Installs base nginx stack
           yum -y install nginx httpd-tools php php-common php-gd php-xmlrpc php-xml php-fpm openssl openssl-devel
@@ -65,11 +72,28 @@ else
             elif [ "$SYS" == '/sbin/init' ]; then
               service nginx start && chkconfig nginx on
               service php-fpm start && chkconfig nginx on
-            fi
-          fi } >> ~/hydration_log
+            fi } >> ~/hydration_log
           echo "nginx successfully installed with OpenSSL and PHP-FPM"
           echo "Check hydration_log for more details"
-      ;;
+				elif [ "$OS" == "ubuntu" ]; then
+					{ # Installs base nginx stack
+					apt-get -y install nginx apache2-utils php5 php5-common php5-gd php5-xmlrpc php5-xml php5-fpm openssl openssl-devel
+					# Starts nginx and php-fpm with Systemd or init script
+					if [ "$SYS" == "systemd" ]; then
+						systemctl start nginx && systemctl enable nginx
+						systemctl start php5-fpm && systemctl enable php5-fpm
+					elif [ "$SYS" == '/sbin/init' ]; then
+						service nginx start && chkconfig nginx on
+						service php5-fpm start && chkconfig nginx on
+					fi } >> ~/hydration_log
+					echo "nginx successfully installed with OpenSSL and PHP-FPM"
+					echo "Check hydration_log for more details"
+				fi
+      	;;
+				*)
+					echo "Please enter a valid option"
+					;;
+				esac
     2)
       echo "MySQL/MariaDB or PGSQL? [m/p]"
       read dbserver
