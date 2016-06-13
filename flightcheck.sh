@@ -8,12 +8,21 @@ OS=`grep -Eiom 1 'CentOS|RedHat|Red Hat|Ubuntu|Fedora|SUSE' /proc/version`
 # Check for Systemd vs sysvinit
 SYS=`ps -p 1 -o cmd h`
 
+# Set spinner for progress
+spin='-\|/'
+
 # Check if user is root, if not tells them to sudo su
 if [ "$USER" != "root" ]; then
 		echo 'WARNING! This script should be run as root'
 		echo 'Please enter sudo su and run the script again'
 else
 	if [ "$OS" == "centos" -a "redhat" -a 'Red Hat' -a "fedora" ]; then
+	echo 'Processing...'
+	i=0
+	while [ $i == 0 ]
+	do
+	printf "\r${spin:$i:1}"
+	sleep .1
 	{
 	  # Update everything currently installed
 		yum -y update
@@ -34,9 +43,17 @@ else
 		rpm -Uvh webtatic-release.rpm
 		yum update
 	} >> ~/flightcheck_log
+	i=1
 	echo 'Done. Check flightcheck_log for more details'
+	done
 
 	elif [ "$OS" == "ubuntu" ]; then
+	echo 'Processing...'
+	i=0
+	while [ $i == 0 ]
+	do
+	printf "\r${spin:$i:1}"
+	sleep .1
 	{
 		# Update everything currently installed
 		apt-get -y update && apt-get -y upgrade
@@ -54,9 +71,17 @@ else
 		apt-get -y install build-essentials
 
 	} >> ~/flightcheck_log
+	i=1
 	echo 'Done. Check flighcheck_log for more details'
+	done
 
 	elif [ "$OS" == "SUSE" ]; then
+	echo 'Processing...'
+	i=0
+	while [ $i == 0]
+	do
+	printf "\r${spin:$i:1}"
+	sleep .1
 	{
 		# Update everything currently installed
 		zypper -n ref && zypper -n up
@@ -67,7 +92,9 @@ else
 		# Install development tools
 		zypper -n --type pattern devel_basis
 	} >> ~/flightcheck_log
+	i=1
 	echo 'Done. Check flightcheck_log for more details.'
+	done
 
 	else
 		echo 'Supported OS Not Detected'
