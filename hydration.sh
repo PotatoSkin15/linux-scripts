@@ -3,7 +3,7 @@
 clear
 
 # Check distribution before installing packages
-OS=`grep -Eiom 1 'CentOS|RedHat|Ubuntu|Fedora' /proc/version`
+OS=`grep -Eiom 1 'CentOS|RedHat|Red Hat|Ubuntu|Fedora' /proc/version`
 
 # Check for Systemd vs sysvinit
 SYS=`ps -p 1 -o cmd h`
@@ -37,7 +37,7 @@ else
 
 				case $webserver in
 				a|A)
-        	if [ "$OS" == 'centos' -a 'redhat' -a 'fedora' ]; then
+        	if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
           	{ # Installs base Apache stack
           	yum -y install httpd httpd-tools php php-common php-gd php-xmlrpc php-xml openssl openssl-devel
             	# Starts Apache2 with Systemd or init script
@@ -64,7 +64,7 @@ else
 					;;
 
 				l|L)
-					if [ "$OS" == 'centos' -a 'redhat' -a 'fedora' ]; then
+					if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
 						{ # Installs Lighttpd
 						yum -y install lighttpd httpd-utils php php-common php-gd php-xmlrpc php-xml openssl openssl-devel
 							# Starts Lighttpd with Systemd or init script
@@ -93,7 +93,7 @@ else
 					;;
 
       	n|N)
-        	if [ "$OS" == 'centos' -a 'redhat' -a 'fedora' ]; then
+        	if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
           	{ # Installs base nginx stack
           	yum -y install nginx httpd-tools php php-common php-gd php-xmlrpc php-xml php-fpm openssl openssl-devel
             	# Starts nginx and php-fpm with Systemd or init script
@@ -140,7 +140,7 @@ else
 
 				case $dbserver in
 				m|M)
-        	if [ "$OS" == 'centos' -a 'redhat' -a 'fedora' ]; then
+        	if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
           	{ # Installs MySQL server
           	yum -y install mysql mysql-server
           	# Starts MariaDB/MySQL with Systemd or init script
@@ -167,7 +167,7 @@ else
 					;;
 
 				p|P)
-        	if [ "$OS" == 'centos' -a 'redhat' -a 'fedora' ]; then
+        	if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
           	{ # Installs PostgreSQL/PGSQL
           	yum -y install postgresql-server postgresql-contrib
           	# Initializes base DB
