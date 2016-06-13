@@ -95,10 +95,18 @@ else
 					;;
 				esac
     2)
-      echo "MySQL/MariaDB or PGSQL? [m/p]"
-      read dbserver
-      if [ "$dbserver" == "m" ]; then
-        if [ "$OS" == "centos" -a "redhat" ]; then
+			clear
+			cat << EOF
+			Select database server:
+			m) MySQL/MariaDB
+			p) PostgreSQL
+			EOF
+
+			read dbserver
+
+			case $dbserver in
+			m)
+        if [ "$OS" == "centos" -a "redhat" -a "fedora" ]; then
           { # Installs MySQL server
           yum -y install mysql mysql-server
             # Starts MariaDB/MySQL with Systemd or init script
@@ -106,12 +114,11 @@ else
               systemctl start mysql && systemctl enable mysql
             elif [ "$SYS" == '/sbin/init' ]; then
               service mysql start && chkconfig mysql on
-            fi
-          fi } >> ~/hydration_log
+            fi } >> ~/hydration_log
           echo "MySQL successfully installed"
           echo "Check hydration_log for more details"
 
-          elif [ "$OS" == "ubuntu" ]; then
+        elif [ "$OS" == "ubuntu" ]; then
             { # Installs MySQL server
             apt-get -y install mysql mysql-server
             # Starts MariaDB/MySQL with Ssytemd or init script
@@ -119,13 +126,14 @@ else
               systemctl start mysql && systemctl enable mysql
             elif [ "$SYS" == '/sbin/init' ]; then
               service mysql start && chkconfig mysql on
-            fi
-          fi } >> ~/hydration_log
+            fi } >> ~/hydration_log
           echo "MySQL successfully installed"
           echo "Check hydration_log for more details"
+				fi
+				;;
 
-      elif [ "$dbserver" == "p" ]; then
-        if [ "$OS" == "centos" -a "redhat" ]; then
+			p)
+        if [ "$OS" == "centos" -a "redhat" -a "fedora" ]; then
           { # Installs PostgreSQL/PGSQL
           yum -y install postgresql-server postgresql-contrib
           # Initializes base DB
@@ -137,10 +145,9 @@ else
             systemctl start postgresql && systemctl enable postgresql
           elif [ "$SYS" == '/sbin/init' ]; then
             service postgresql start && chkconfig postgresql on
-          fi
-        fi } >> ~/hydration_log
-        echo "PostgreSQL successfully installed"
-        echo "Check hydration_log for more details"
+					fi } >> ~/hydration_log
+        	echo "PostgreSQL successfully installed"
+        	echo "Check hydration_log for more details"
 
         elif [ "$OS" == "ubuntu" ]; then
           { #Installes PostgreSQL/PGSQL
@@ -150,11 +157,16 @@ else
             systemctl start postgresql && systemctl enable postgresql
           elif [ "$SYS" == '/sbin/init' ]; then
             service postgresql start && chkconfig postgresql on
-          fi
-        fi } >> ~/hydration_log
-        echo "PostgreSQL successfully installed"
-        echo "Check hydration_log for more details"
-        ;;
+          fi } >> ~/hydration_log
+        	echo "PostgreSQL successfully installed"
+        	echo "Check hydration_log for more details"
+				fi
+				;;
+			*)
+				echo "Please enter a valid option"
+				;;
+				esac
+    ;;
     *)
       echo "Please select a valid option"
       ;;
