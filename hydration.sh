@@ -3,7 +3,7 @@
 clear
 
 # Check distribution before installing packages
-OS=`grep -Eiom 1 'CentOS|RedHat|Ubuntu' /proc/version`
+OS=`grep -Eiom 1 'CentOS|RedHat|Ubuntu|Fedora' /proc/version`
 
 # Check for Systemd vs sysvinit
 SYS=`ps -p 1 -o cmd h`
