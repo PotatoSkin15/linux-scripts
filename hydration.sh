@@ -73,8 +73,8 @@ else
     2)
       echo "MySQL/MariaDB or PGSQL? [m/p]"
       read dbserver
-        if [ "$dbserver" == "m" ]; then
-          if [ "$OS" == "centos" -a "redhat" ]; then
+      if [ "$dbserver" == "m" ]; then
+        if [ "$OS" == "centos" -a "redhat" ]; then
           { # Installs MySQL server
           yum -y install mysql mysql-server
             # Starts MariaDB/MySQL with Systemd or init script
@@ -100,4 +100,39 @@ else
           echo "MySQL successfully installed"
           echo "Check hydration_log for more details"
 
-        elif [ "$dbserver" == "p" ]; then
+      elif [ "$dbserver" == "p" ]; then
+        if [ "$OS" == "centos" -a "redhat" ]; then
+          { # Installs PostgreSQL/PGSQL
+          yum -y install postgresql-server postgresql-contrib
+          # Initializes base DB
+          postgresql-setup init db
+          # Changes Host-Based Auth file from identity to passwd auth
+          sed -i -e 's/ident/md5/g' /var/lib/pgsql/data/pg_hba.conf
+          # Starts PGSQL with Systemd or init script
+          if [ "$SYS" == "systemd" ]; then
+            systemctl start postgresql && systemctl enable postgresql
+          elif [ "$SYS" == "sysvinit" ]; then
+            service postgresql start && chkconfig postgresql on
+          fi
+        fi } >> ~/hydration_log
+        echo "PostgreSQL successfully installed"
+        echo "Check hydration_log for more details"
+
+        elif [ "$OS" == "ubuntu" ]; then
+          { #Installes PostgreSQL/PGSQL
+          apt-get update && apt-get -y install postgresql postgresql-contrib
+          # Starts PGSQL with systemd or init script
+          if [ "$SYS" == "systemd" ]; then
+            systemctl start postgresql && systemctl enable postgresql
+          elif [ "$SYS" == "sysvinit" ]; then
+            service postgresql start && chkconfig postgresql on
+          fi
+        fi } >> ~/hydration_log
+        echo "PostgreSQL successfully installed"
+        echo "Check hydration_log for more details"
+        ;;
+    *)
+      echo "Please select a valid option"
+      ;;
+    esac
+    
