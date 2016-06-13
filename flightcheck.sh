@@ -66,7 +66,7 @@ else
 	elif [ "$OS" == "ubuntu" ]; then
 	{
 		# Update everything currently installed
-		apt-get -y update; apt-get -y upgrade
+		apt-get -y update; apt-get -y upgrade; apt-get -y install openssh-server
 
 		# Turn off SELinux for now
 		setenforce 0
