@@ -3,7 +3,7 @@
 clear
 
 # Check distribution before installing packages
-OS=`grep -Eiom 1 'CentOS|RedHat|Ubuntu|Fedora' /proc/version`
+OS=`grep -Eiom 1 'CentOS|RedHat|Ubuntu|Fedora|SUSE' /proc/version`
 
 # Check for Systemd vs sysvinit
 SYS=`ps -p 1 -o cmd h`
@@ -34,13 +34,12 @@ else
 		rpm -Uvh webtatic-release.rpm
 		yum update
 	} >> ~/flightcheck_log
-
 	echo 'Done. Check flightcheck_log for more details'
 
 	elif [ "$OS" == "ubuntu" ]; then
 	{
 		# Update everything currently installed
-		apt-get -y update; apt-get -y upgrade
+		apt-get -y update && apt-get -y upgrade
 
 		# Turn off SELinux for now
 		setenforce 0
@@ -55,7 +54,21 @@ else
 		apt-get -y install build-essentials
 
 	} >> ~/flightcheck_log
-		echo 'Done. Check flighcheck_log for more details'
+	echo 'Done. Check flighcheck_log for more details'
+
+	elif [ "$OS" == "SUSE" ]; then
+	{
+		# Update everything currently installed
+		zypper -n ref && zypper -n up
+
+		# Install basics for ease of use
+		zypper -n in git vim htop wget openssh net-tools firewalld
+
+		# Install development tools
+		zypper -n --type pattern devel_basis
+	} >> ~/flightcheck_log
+	echo 'Done. Check flightcheck_log for more details.'
+
 	else
 		echo 'Supported OS Not Detected'
 	fi
