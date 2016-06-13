@@ -66,10 +66,13 @@ else
 	elif [ "$OS" == "ubuntu" ]; then
 	{
 		# Update everything currently installed
-		apt-get -y update; apt-get -y upgrade; apt-get -y install openssh-server
+		apt-get -y update; apt-get -y upgrade
 
 		# Turn off SELinux for now
 		setenforce 0
+		
+		# Install basics for ease of use
+		apt-get -y install git vim htop wget openssh net-tools
 
 		# Shut off SELinux if not already
 		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
