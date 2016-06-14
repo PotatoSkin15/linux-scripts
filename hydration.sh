@@ -14,7 +14,7 @@ if [ "$USER" != 'root' ]; then
 else
   	echo 'Make sure you run flightcheck.sh first'
   	sleep 5
-  	cat EOF
+  	cat << EOF
   	Select your action:
   	1) Install web server (Apache, nginx, Lighttpd)
   	2) Install DB server (MySQL/MariaDB, PGSQL)
