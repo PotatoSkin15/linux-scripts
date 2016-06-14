@@ -17,7 +17,7 @@ sleep 5
 cat << EOF
 Select your action:
 1) Install web server (Apache, nginx, Lighttpd)
-2) Install DB server (MySQL/MariaDB, PGSQL)
+2) Install DB server (MySQL/MariaDB, PGSQL, MongoDB)
 3) Install GitLab
 EOF
 
@@ -40,6 +40,8 @@ read -r webserver
 case $webserver in
 	a|A)
 		if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
+			echo 'RHEL-Based OS Detected'
+			echo 'Installing Apache...'
 			{ # Installs base Apache stack
 			yum -y install httpd httpd-tools php php-common php-gd php-xmlrpc php-xml openssl openssl-devel
 			# Starts Apache2 with Systemd or init script
@@ -52,6 +54,8 @@ case $webserver in
 			echo 'Check hydration_log for more details'
 
 		elif [ "$OS" == 'ubuntu' ]; then
+			echo 'Ubuntu OS Detected'
+			echo 'Installing Apache...'
 			{ # Installs base Apache stack
 			apt-get -y install apache2 apache2-utils php5 php5-common php5-gd php5-xmlrpc php5-xml openssl openssl-devel
 			# Starts Apache2 with Systemd or init script
@@ -64,6 +68,8 @@ case $webserver in
 			echo 'Check hydration_log for more details'
 
 		elif [ "$OS" == 'SUSE' ]; then
+			echo 'OpenSUSE OS Detected'
+			echo 'Installing Apache...'
 			{ #Installs base Apache stack
 			zypper -n in -R apache2 apache2-utils php5 apache2-mod_php5 openssl openssl-devel
 			# Enable PHP module for Apache
@@ -81,6 +87,8 @@ case $webserver in
 
 	l|L)
 		if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
+			echo 'RHEL-Based OS Detected'
+			echo 'Installing Lighttpd...'
 			{ # Installs Lighttpd
 			yum -y install lighttpd httpd-utils php php-common php-gd php-xmlrpc php-xml openssl openssl-devel
 			# Starts Lighttpd with Systemd or init script
@@ -93,6 +101,8 @@ case $webserver in
 		echo 'Check hydration_log for more details'
 
 		elif [ "$OS" == 'ubuntu' ]; then
+			echo 'Ubuntu OS Detected'
+			echo 'Installing Lighttpd'
 			{ # Installs lighttpd
 			apt-get -y install lighttpd apache2-utils php5 php5-common php5-gd php5-xmlrpc php5-xml php5-cgi openssl openssl-devel
 			# Enables PHP5-CGI for use with Lighttpd
@@ -107,6 +117,8 @@ case $webserver in
 		echo 'Check hydration_log for more details'
 
 		elif [ "$OS" == 'SUSE' ]; then
+			echo 'OpenSUSE OS Detected'
+			echo 'Installing Lighttpd...'
 			{ # Installs Lighttpd
 			zypper -n -R in lighttpd apache2-utils php5 php5-fpm openssl openssl-devel
 			# Rename PHP-FPM Directory
@@ -128,6 +140,8 @@ case $webserver in
 
 	n|N)
 		if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
+			echo 'RHEL-Based OS Detected'
+			echo 'Installing nginx...'
 			{ # Installs base nginx stack
 			yum -y install nginx httpd-tools php php-common php-gd php-xmlrpc php-xml php-fpm openssl openssl-devel
 			# Starts nginx and php-fpm with Systemd or init script
@@ -142,6 +156,8 @@ case $webserver in
 		echo 'Check hydration_log for more details'
 
 		elif [ "$OS" == 'ubuntu' ]; then
+			echo 'Ubuntu OS Detected'
+			echo 'Installing nginx...'
 			{ # Installs base nginx stack
 			apt-get -y install nginx apache2-utils php5 php5-common php5-gd php5-xmlrpc php5-xml php5-fpm openssl openssl-devel
 			# Starts nginx and php-fpm with Systemd or init script
@@ -156,6 +172,8 @@ case $webserver in
 		echo 'Check hydration_log for more details'
 
 		elif [ "$OS" == 'SUSE' ]; then
+			echo 'OpenSUSE OS Detected'
+			echo 'Installing nginx...'
 			{ # Installs base nginx stack
 			zypper -n -R in nginx-1.0 php5 php5-fpm openssl openssl-devel
 			# Rename PHP-FPM Directory
@@ -186,6 +204,7 @@ clear
 cat << EOF
 Select database server:
 m) MySQL/MariaDB
+o) MongoDB
 p) PostgreSQL
 EOF
 
@@ -195,6 +214,8 @@ read -r dbserver
 case $dbserver in
 	m|M)
 		if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
+			echo 'RHEL-Based OS Detected'
+			echo 'Installing MySQL/MariaDB...'
 			{ # Installs MySQL server
 			yum -y install mysql mysql-server php-mysql
 			# Starts MariaDB/MySQL with Systemd or init script
@@ -207,6 +228,8 @@ case $dbserver in
 		echo 'Check hydration_log for more details'
 
 		elif [ "$OS" == 'ubuntu' ]; then
+			echo 'Ubuntu OS Detected'
+			echo 'Installing MySQL/MariaDB...'
 			{ # Installs MySQL server
 			apt-get -y install mysql mysql-server php5-mysql
 			# Starts MariaDB/MySQL with Sytemd or init script
@@ -219,6 +242,8 @@ case $dbserver in
 		echo 'Check hydration_log for more details'
 
 		elif [ "$OS" == 'SUSE' ]; then
+			echo 'OpenSUSE OS Detected'
+			echo 'Installing MySQL/MariaDB...'
 			{ # Installs MySQL/MariaDB server
 			zypper -n -R in mariadb mariadb-tools php5-mysql
 			# Starts MariaDB/MySQL with Systemd or init script
@@ -232,8 +257,75 @@ case $dbserver in
 		fi
 	;;
 
+	o|O)
+		if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
+			echo 'RHEL-Based OS Detected'
+			echo 'Installing MongoDB...'
+			{ # Installs MongoDB Repo and updates Yum
+			echo "
+			[mongodb]
+			name=MongoDB Repository
+			baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.2/x86_64/
+			gpgcheck=1
+			enabled=1
+			gpgkey=https://www.mongodb.org/static/pgp/server-3.2.asc" >> /etc/yum.repos.d/mongodb.repos
+
+			# Refresh Yum cache and install MongoDB
+ 			yum -y install mongodb-org mongodb-org-server
+
+			# Starts MongoDB with Systemd or init script
+			if [ "$SYS" == 'systemd' ]; then
+				systemctl start mongod && systemctl enable mongodb-org
+			elif [ "$SYS" == 'init' ]; then
+				service mongod start && chkconfig mongod on
+			fi } >> ~/hydration_log
+		echo 'MongoDB successfuly installed'
+		echo 'Check hydration_log for more details'
+
+	elif [ "$OS" == 'ubuntu' ]; then
+		echo 'Ubuntu OS Detected'
+		echo 'Installing MongoDB...'
+		{ # Import MongoDB apt-key
+		apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+		# Add MongoDB apt repo
+		echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | tee /etc/apt/sources.list.d/mongodb.list
+
+		# Update apt cache and install MongoDB
+		apt-get update && apt-get -y install mongodb-org
+
+		# Start MongoDB with Systemd or init script
+		if [ "$SYS" == 'systemd' ]; then
+			systemctl start mongod && systemctl enable mongod
+		elif [ "$SYS" == 'init' ]; then
+			service mongod start && chkconfig mongod on
+		fi } >> ~/hydration_log
+	echo 'MongoDB successfully installed'
+	echo 'Check hydration_log for more details'
+
+	elif [ "$OS" == 'SUSE' ]; then
+		echo 'OpenSUSE OS Detected'
+		echo 'Installing MongoDB...'
+		{ # Add MongoDB repo
+		zypper -n addrepo --no-gpgcheck https://repo.mongodb.org/zypper/suse/$(sed -rn 's/VERSION=.*([0-9]{2}).*/\1/p' /etc/os-release)/mongodb-org/3.2/x86_64/ mongodb
+
+		# Refresh zypper cache and install MongoDB
+		zypper -n ref && zypper -n in mongodb-org
+
+		# Start MongoDB with Systemd or init script
+		if [ "$SYS" == 'systemd' ]; then
+			systemctl start mongod && systemctl enable mongod
+		elif [ "$SYS" == 'init' ]; then
+			service mongod start && chkconfig mongod on
+		fi } >> ~/hydration_log
+	echo 'MongoDB successfully installed'
+	echo 'Check hyration_log for more details'
+	fi
+	;;
+
 	p|P)
 		if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
+			echo 'RHEL-Based OS Detected'
+			echo 'Installing PostgreSQL (PGSQL)...'
 			{ # Installs PostgreSQL/PGSQL
 			yum -y install postgresql-server postgresql-contrib
 			# Initializes base DB
@@ -250,6 +342,8 @@ case $dbserver in
 		echo 'Check hydration_log for more details'
 
 		elif [ "$OS" == 'ubuntu' ]; then
+			echo 'Ubuntu OS Detected'
+			echo 'Installing PostgreSQL (PGSQL)...'
 			{ # Installs PostgreSQL/PGSQL
 			apt-get update && apt-get -y install postgresql postgresql-contrib
 			# Starts PGSQL with systemd or init script
@@ -262,6 +356,8 @@ case $dbserver in
 		echo 'Check hydration_log for more details'
 
 		elif [ "$OS" == 'SUSE' ]; then
+			echo 'OpenSUSE OS Detected'
+			echo 'Installing PostgreSQL (PGSQL)...'
 			{ # Installs PostgreSQL/PGSQL
 			zypper -n addrepo -t YUM http://packages.2ndquadrant.com/postgresql-z-suse/zypper/sles-11sp3-s390x pg
 			zypper -n refresh
