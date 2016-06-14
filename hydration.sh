@@ -6,7 +6,7 @@ clear
 OS=`grep -Eiom 1 'CentOS|RedHat|Red Hat|Ubuntu|Fedora|SUSE' /proc/version`
 
 # Check for Systemd vs sysvinit
-SYS=`ps -p 1 -o cmd h`
+SYS=`ps -p 1 | grep -Eiom 1 'systemd|init'`
 
 if [ "$USER" != 'root' ]; then
 		echo 'WARNING! This script should be run as root'
@@ -45,7 +45,7 @@ case $webserver in
 			# Starts Apache2 with Systemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start httpd && systemctl enable httpd
-				elif [ "$SYS" == '/sbin/init' ]; then
+				elif [ "$SYS" == 'init' ]; then
 					service httpd start && chkconfig httpd on
 				fi } >> ~/hydration_log
 			echo 'Apache successfully installed with OpenSSL and PHP'
@@ -57,7 +57,7 @@ case $webserver in
 			# Starts Apache2 with Systemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start apache2 && systemctl enable apache2
-				elif [ "$SYS" == '/sbin/init' ]; then
+				elif [ "$SYS" == 'init' ]; then
 					service apache2 start && chkconfig apache2 on
 				fi } >> ~/hydration_log
 			echo 'Apache successfully installed with OpenSSL and PHP'
@@ -71,7 +71,7 @@ case $webserver in
 			# Starts Apache2 with Systemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start apache2 && systemctl enable apache2
-				elif [ "$SYS" == '/sbin/init' ]; then
+				elif [ "$SYS" == 'init' ]; then
 					service apache2 start && chkconfig apache2 on
 				fi } >> ~/hydration_log
 			echo 'Apache successfully installed with OpenSSL and PHP'
@@ -86,7 +86,7 @@ case $webserver in
 			# Starts Lighttpd with Systemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start lighttpd && systemctl enable lighttpd
-				elif [ "$SYS" == '/sbin/init' ]; then
+				elif [ "$SYS" == 'init' ]; then
 					service lighttpd start && chkconfig lighttpd on
 				fi } >> ~/hydration_log
 		echo 'Lighttpd successfully installed with OpenSSL and PHP'
@@ -100,7 +100,7 @@ case $webserver in
 			# Starts Lighttpd with Systemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start lighttpd && systemctl enable lighttpd
-				elif [ "$SYS" == '/sbin/init' ]; then
+				elif [ "$SYS" == 'init' ]; then
 					service lighttpd start && chkconfig lighttpd on
 				fi } >> ~/hydration_log
 		echo 'Lighttpd successfully installed with OpenSSL and PHP5-CGI'
@@ -117,7 +117,7 @@ case $webserver in
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start lighttpd && systemctl enable lighttpd
 					systemctl start php-fpm && systemctl enable php-fpm
-				elif [ "$SYS" == '/sbin/init' ]; then
+				elif [ "$SYS" == 'init' ]; then
 					service lighttpd start && chkconfig lighttpd on
 					service php-fpm start && chkconfig php-fpm on
 				fi } >> ~/hydration_log
@@ -134,7 +134,7 @@ case $webserver in
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start nginx && systemctl enable nginx
 					systemctl start php-fpm && systemctl enable php-fpm
-				elif [ "$SYS" == '/sbin/init' ]; then
+				elif [ "$SYS" == 'init' ]; then
 					service nginx start && chkconfig nginx on
 					service php-fpm start && chkconfig nginx on
 				fi } >> ~/hydration_log
@@ -148,7 +148,7 @@ case $webserver in
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start nginx && systemctl enable nginx
 					systemctl start php5-fpm && systemctl enable php5-fpm
-				elif [ "$SYS" == '/sbin/init' ]; then
+				elif [ "$SYS" == 'init' ]; then
 					service nginx start && chkconfig nginx on
 					service php5-fpm start && chkconfig nginx on
 				fi } >> ~/hydration_log
@@ -166,7 +166,7 @@ case $webserver in
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start nginx && systemctl enable nginx
 					systemctl start php-fpm && systemctl enable php-fpm
-				elif [ "$SYS" == '/sbin/init' ]; then
+				elif [ "$SYS" == 'init' ]; then
 					service nginx start && chkconfig nginx on
 					service php-fpm start && chkconfig php-fpm on
 				fi } >> ~/hydration_log
@@ -200,7 +200,7 @@ case $dbserver in
 			# Starts MariaDB/MySQL with Systemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start mysql && systemctl enable mysql
-				elif [ "$SYS" == '/sbin/init' ]; then
+				elif [ "$SYS" == 'init' ]; then
 					service mysql start && chkconfig mysql on
 				fi } >> ~/hydration_log
 		echo 'MySQL successfully installed'
@@ -212,7 +212,7 @@ case $dbserver in
 			# Starts MariaDB/MySQL with Sytemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start mysql && systemctl enable mysql
-				elif [ "$SYS" == '/sbin/init' ]; then
+				elif [ "$SYS" == 'init' ]; then
 					service mysql start && chkconfig mysql on
 				fi } >> ~/hydration_log
 		echo 'MySQL successfully installed'
@@ -224,7 +224,7 @@ case $dbserver in
 			# Starts MariaDB/MySQL with Systemd or init script
 			if [ "$SYS" == 'systemd' ]; then
 				systemctl start mysql && systemctl enable mysql
-			elif [ "$SYS" == '/sbin/init' ]; then
+			elif [ "$SYS" == 'init' ]; then
 				service mysql start && chkconfig mysql on
 			fi } >> ~/hydration_log
 		echo 'MySQL successfully installed'
@@ -243,7 +243,7 @@ case $dbserver in
 			# Starts PGSQL with Systemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start postgresql && systemctl enable postgresql
-				elif [ "$SYS" == '/sbin/init' ]; then
+				elif [ "$SYS" == 'init' ]; then
 					service postgresql start && chkconfig postgresql on
 				fi } >> ~/hydration_log
 		echo 'PostgreSQL successfully installed'
@@ -255,7 +255,7 @@ case $dbserver in
 			# Starts PGSQL with systemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start postgresql && systemctl enable postgresql
-				elif [ "$SYS" == '/sbin/init' ]; then
+				elif [ "$SYS" == 'init' ]; then
 					service postgresql start && chkconfig postgresql on
 				fi } >> ~/hydration_log
 		echo 'PostgreSQL successfully installed'
@@ -271,7 +271,7 @@ case $dbserver in
 			# Starts PGSQL with systemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start postgresql && systemctl enable postgresql
-				elif [ "$SYS" == '/sbin/init' ]; then
+				elif [ "$SYS" == 'init' ]; then
 					service posgresql start && chkconfig postgresql on
 				fi } >> ~/hydration_log
 		echo 'PosgreSQL successfully installed'

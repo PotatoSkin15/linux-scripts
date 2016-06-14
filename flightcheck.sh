@@ -6,7 +6,7 @@ clear
 OS=`grep -Eiom 1 'CentOS|RedHat|Red Hat|Ubuntu|Fedora|SUSE' /proc/version`
 
 # Check for Systemd vs sysvinit
-SYS=`ps -p 1 -o cmd h`
+SYS=`ps -p 1 | grep -Eiom 1 'systemd|init'`
 
 # Check if user is root, if not tells them to sudo su
 if [ "$USER" != "root" ]; then
