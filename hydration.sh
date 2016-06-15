@@ -16,12 +16,12 @@ echo 'Make sure you run flightcheck.sh first'
 sleep 5
 cat << EOF
 Select your action:
-1) Install web server (Apache, nginx, Lighttpd)
-2) Install DB server (MySQL/MariaDB, PGSQL, MongoDB)
-3) Install GitLab
+1) Install web server (Apache, Lighttpd, nginx)
+2) Install DB server (MySQL/MariaDB, MongoDB, PGSQL)
+3) Install performance tools (Memcache, Varnish)
 EOF
 
-printf 'Selection [1/2/3]:'
+printf 'Selection [1|2|3]:'
 read -r task
 
 case $task in
@@ -34,7 +34,7 @@ l) Lighttpd
 n) nginx
 EOF
 
-printf 'Selection [a/l/n]:'
+printf 'Selection [a|l|n]:'
 read -r webserver
 
 case $webserver in
@@ -208,7 +208,7 @@ o) MongoDB
 p) PostgreSQL
 EOF
 
-printf 'Selection [a/l/n]:'
+printf 'Selection [m|o|p]:'
 read -r dbserver
 
 case $dbserver in
@@ -377,6 +377,74 @@ case $dbserver in
 
 	*)
 		echo 'Please enter a valid option'
+	;;
+	esac
+;;
+
+3)
+clear
+cat << EOF
+Select tool to install:
+m) Memcached
+v) Varnish
+EOF
+
+printf 'Selection [m|v]:'
+read -r performance
+
+case $performance in
+	m|M)
+		if [ "$OS" == 'centos' -a 'RedHat' -a 'Red Hat' -a 'fedora' ]; then
+			echo 'RHEL-Based OS Detected'
+			echo 'Installing Memcached...'
+			{ # Installs Memcached and Memcached PHP module
+			yum -y install libevent libevent-devel memcached php-pecl-memcached
+			# Starts Memcahced with systemd or init script
+				if [ "$SYS" == 'systemd' ]; then
+					systemctl start memcached && systemctl enable memcached
+				elif [ "$SYS" == 'init' ]; then
+					service memcached start && chkconfig memcached on
+				fi } >> ~/hydration_log
+		echo 'Memcached successfully installed'
+		echo 'Restart your web server and check hydration_log for more details'
+
+		elif [ "$OS" == 'ubuntu' ]; then
+			echo 'Ubuntu OS Detected'
+			echo 'Installing Memcached...'
+			{ # Installs Memcached and Memcached PHP module
+			apt-get update && apt-get -y install memcached php5-memcached
+			# Starts Memcached with systemd or init script
+				if [ "$SYS" == 'systemd' ]; then
+					systemctl start memcached && systemctl enable memcached
+				elif [ "$SYS" == 'init' ]; then
+					service memcached start && chkconfig memcached on
+				fi } >> ~/hydration_log
+		echo 'Memcached successfully installed'
+		echo 'Restart your web server and check hydration_log for more details'
+
+		elif [ "$OS" == 'SUSE' ]; then
+			echo 'OpenSUSE OS Detected'
+			echo 'Installing Memcached...'
+			{ # Installs Memcached and Memcached PHP module
+			yast2 -i memcached
+			zypper -n refresh && zypper -n -R in php-pecl
+			pecl install memcache
+			# Add Memcached module to load with PHP
+			echo 'extension=memcache.so' >> /etc/php5/conf.d/memcache.ini
+			# Starts Memcached with systemd or init script
+				if [ "$SYS" == 'systemd' ]; then
+					systemctl start memcached && systemctl enable memcached
+				elif [ "$SYS" == 'init' ]; then
+					service memcached start && chkconfig memcached on
+				fi } >> ~/hydration_log
+		echo 'Memcached successfully installed'
+		echo 'Restart your web server and check hydration_log for more details'
+		;;
+
+		fi
+
+	*)
+		echo 'Please select a valid option'
 	;;
 	esac
 ;;
