@@ -382,6 +382,8 @@ case $dbserver in
 ;;
 
 3)
+
+srv=`ls /etc | grep -Eiom 1 'Apache2|httpd|nginx|lighttpd'`
 clear
 cat << EOF
 Select tool to install:
@@ -402,11 +404,13 @@ case $performance in
 			# Starts Memcahced with systemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start memcached && systemctl enable memcached
+					systemctl restart $srv
 				elif [ "$SYS" == 'init' ]; then
 					service memcached start && chkconfig memcached on
+					service $srv restart
 				fi } >> ~/hydration_log
-		echo 'Memcached successfully installed'
-		echo 'Restart your web server and check hydration_log for more details'
+		echo "Memcached successfully installed and $srv restarted"
+		echo 'Check hydration_log for more details'
 
 		elif [ "$OS" == 'ubuntu' ]; then
 			echo 'Ubuntu OS Detected'
@@ -416,11 +420,13 @@ case $performance in
 			# Starts Memcached with systemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start memcached && systemctl enable memcached
+					systemctl restart $srv
 				elif [ "$SYS" == 'init' ]; then
 					service memcached start && chkconfig memcached on
+					service $srv restart
 				fi } >> ~/hydration_log
-		echo 'Memcached successfully installed'
-		echo 'Restart your web server and check hydration_log for more details'
+		echo "Memcached successfully installed and $srv restarted"
+		echo 'Check hydration_log for more details'
 
 		elif [ "$OS" == 'SUSE' ]; then
 			echo 'OpenSUSE OS Detected'
@@ -434,11 +440,13 @@ case $performance in
 			# Starts Memcached with systemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start memcached && systemctl enable memcached
+					systemctl restart $srv
 				elif [ "$SYS" == 'init' ]; then
 					service memcached start && chkconfig memcached on
+					service $srv restart
 				fi } >> ~/hydration_log
-		echo 'Memcached successfully installed'
-		echo 'Restart your web server and check hydration_log for more details'
+		echo "Memcached successfully installed and $srv restarted"
+		echo 'Check hydration_log for more details'
 		;;
 
 		fi
