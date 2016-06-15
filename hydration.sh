@@ -448,9 +448,58 @@ case $performance in
 				fi } >> ~/hydration_log
 		echo "Memcached successfully installed and $srv restarted"
 		echo 'Check hydration_log for more details'
-		;;
-
 		fi
+	;;
+
+	v|V)
+		if [ "$OS" == 'centos' -a 'RedHat' -a 'Red Hat' -a 'fedora' ]; then
+			echo 'RHEL-Based OS Detected'
+			echo 'Installing Varnish...'
+			{ # Install Varnish
+			yum -y install varnish
+			# Start Varnish with systemd or init script
+				if [ "$SYS" == 'systemd' ]; then
+					systemctl start varnish && systemctl enable varnish
+				elif [ "$SYS" == 'init' ]; then
+					service varnish start && chkconfig varnish on
+				fi } >> ~/hydration_log
+		echo 'Varnish successfully installed'
+		echo "Modify the vhosts for your webserver $srv and check hydration_log for more details"
+
+		elif [ "$OS" == 'ubuntu' ]; then
+			echo 'Ubuntu OS Detected'
+			echo 'Installing Varnish...'
+			{ # Add Varnish repo and GPG key
+			apt-get -y install apt-transport-https
+			curl https://repo.varnish-cache.org/GPG-key.txt | apt-key add -
+			echo "deb https://repo.varnish-cache.org/ubuntu/ trusty varnish-4.1" >> /etc/apt/sources.list.d/varnish-cache.list
+			# Install Varnish
+			apt-get update && apt-get -y install varnish
+			# Start Varnish with systemd or init script
+				if [ "$SYS" == 'systemd' ]; then
+					systemctl start varnish && systemctl enable varnish
+				elif [ "$SYS" == 'init' ]; then
+					service varnish start && chkconfig varnish on
+				fi } >> ~/hydration_log
+		echo 'Varnish successfully installed'
+		echo "Modify the vhosts for your webserver $srv and check hydration_log for more details"
+
+		elif [ "$OS" == 'SUSE' ]; then
+			echo 'OpenSUSE OS Detected'
+			echo 'Installing Varnish...'
+			{ # Add repo and install Varnish
+			zypper -n addrepo http://download.opensuse.org/repositories/server:http/openSUSE_Tumbleweed/server:http.repo
+			zypper -n refresh && zypper -n install varnish
+			# Start Varnish with systemd or init script
+				if [ "$SYS" == 'systemd' ]; then
+					systemctl start varnish && systemctl enable varnish
+				elif [ "$SYS" == 'init' ]; then
+					service varnish start && chkconfig varnish on
+				fi } >> ~/hydration_log
+		echo 'Varnish successfully installed'
+		echo "Modify the vhosts for your webserver $srv and check hydration_log for more details"
+		fi
+	;;
 
 	*)
 		echo 'Please select a valid option'
