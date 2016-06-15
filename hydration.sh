@@ -382,8 +382,9 @@ case $dbserver in
 ;;
 
 3)
-
+# Check for web server software
 srv=`ls /etc | grep -Eiom 1 'Apache2|httpd|nginx|lighttpd'`
+
 clear
 cat << EOF
 Select tool to install:
