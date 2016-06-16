@@ -3,7 +3,7 @@
 clear
 
 # Check distribution before installing packages
-OS=`grep -Eiom 1 'CentOS|RedHat|Red Hat|Ubuntu|Fedora|SUSE' /proc/version`
+OS=`grep -Eiom 1 'CentOS|RedHat|euk|Ubuntu|Fedora|SUSE|amzn' /proc/version`
 
 # Check for Systemd vs sysvinit
 SYS=`ps -p 1 | grep -Eiom 1 'systemd|init'`
@@ -39,7 +39,7 @@ read -r webserver
 
 case $webserver in
 	a|A)
-		if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
+		if [ "$OS" == 'centos' -a 'redhat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing Apache...'
 			{ # Installs base Apache stack
@@ -86,7 +86,7 @@ case $webserver in
 	;;
 
 	l|L)
-		if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
+		if [ "$OS" == 'centos' -a 'redhat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing Lighttpd...'
 			{ # Installs Lighttpd
@@ -139,7 +139,7 @@ case $webserver in
 	;;
 
 	n|N)
-		if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
+		if [ "$OS" == 'centos' -a 'redhat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing nginx...'
 			{ # Installs base nginx stack
@@ -213,7 +213,7 @@ read -r dbserver
 
 case $dbserver in
 	m|M)
-		if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
+		if [ "$OS" == 'centos' -a 'redhat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing MySQL/MariaDB...'
 			{ # Installs MySQL server
@@ -258,7 +258,7 @@ case $dbserver in
 	;;
 
 	o|O)
-		if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
+		if [ "$OS" == 'centos' -a 'redhat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing MongoDB...'
 			{ # Installs MongoDB Repo and updates Yum
@@ -323,7 +323,7 @@ case $dbserver in
 	;;
 
 	p|P)
-		if [ "$OS" == 'centos' -a 'redhat' -a 'Red Hat' -a 'fedora' ]; then
+		if [ "$OS" == 'centos' -a 'redhat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing PostgreSQL (PGSQL)...'
 			{ # Installs PostgreSQL/PGSQL
@@ -397,7 +397,7 @@ read -r performance
 
 case $performance in
 	m|M)
-		if [ "$OS" == 'centos' -a 'RedHat' -a 'Red Hat' -a 'fedora' ]; then
+		if [ "$OS" == 'centos' -a 'RedHat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing Memcached...'
 			{ # Installs Memcached and Memcached PHP module
@@ -452,7 +452,7 @@ case $performance in
 	;;
 
 	v|V)
-		if [ "$OS" == 'centos' -a 'RedHat' -a 'Red Hat' -a 'fedora' ]; then
+		if [ "$OS" == 'centos' -a 'RedHat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing Varnish...'
 			{ # Install Varnish
