@@ -27,7 +27,7 @@ else
 		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
 
 		# More basics that should be installed for ease of use
-		yum -y install git vim htop wget openssh net-tools epel-release firewalld unzip
+		yum -y install git vim htop wget openssh net-tools epel-release firewalld zip bzip2
 
 		# Webtatic
 		wget https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
@@ -49,7 +49,7 @@ else
 		setenforce 0
 
 		# Install basics for ease of use
-		apt-get -y install git vim htop wget openssh net-tools unzip
+		apt-get -y install git vim htop wget openssh net-tools zip bzip2
 
 		# Shut off SELinux if not already
 		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
@@ -68,7 +68,7 @@ else
 		zypper -n ref && zypper -n up
 
 		# Install basics for ease of use
-		zypper -n in git vim htop wget openssh net-tools
+		zypper -n in git vim htop wget openssh net-tools zip bzip2
 
 		# Install development tools
 		zypper -n --type pattern devel_basis
