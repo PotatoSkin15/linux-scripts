@@ -8,10 +8,13 @@ OS=`grep -Eiom 1 'CentOS|RedHat|euk|Ubuntu|Fedora|SUSE|amzn' /proc/version`
 # Check for Systemd vs sysvinit
 SYS=`ps -p 1 | grep -Eiom 1 'systemd|init'`
 
+loop=0
+
 if [ "$USER" != 'root' ]; then
 		echo 'WARNING! This script should be run as root'
 		echo 'Please enter sudo su and run the script again'
 else
+while [ "$loop" == 0 ]; do
 echo 'Make sure you run flightcheck.sh first'
 sleep 5
 cat << EOF
@@ -19,9 +22,10 @@ Select your action:
 1) Install web server (Apache, Lighttpd, nginx)
 2) Install DB server (MySQL/MariaDB, MongoDB, PGSQL)
 3) Install performance tools (Memcache, Varnish)
+0) Exit
 EOF
 
-printf 'Selection [1|2|3]:'
+printf 'Selection [1|2|3|0]:'
 read -r task
 
 case $task in
@@ -32,9 +36,10 @@ Select webserver:
 a) Apache
 l) Lighttpd
 n) nginx
+q) Exit
 EOF
 
-printf 'Selection [a|l|n]:'
+printf 'Selection [a|l|n|q]:'
 read -r webserver
 
 case $webserver in
@@ -82,6 +87,12 @@ case $webserver in
 				fi } >> ~/hydration_log
 			echo 'Apache successfully installed with OpenSSL and PHP'
 			echo 'Check hydration_log for more details'
+		fi
+
+		printf 'Press q to quit, or press any key to go to the main menu'
+		read -r quit
+		if [ "$quit" == 'q' -a 'Q' ]; then
+			break
 		fi
 	;;
 
@@ -135,6 +146,12 @@ case $webserver in
 				fi } >> ~/hydration_log
 		echo 'Lighttpd successfully installed with OpenSSL and PHP-FPM'
 		echo 'Check hydration_log for more details'
+		fi
+
+		printf 'Press q to quit, or press any key to go to the main menu'
+		read -r quit
+		if [ "$quit" == 'q' -a 'Q' ]; then
+			break
 		fi
 	;;
 
@@ -191,7 +208,16 @@ case $webserver in
 		echo 'nginx successfully installed with OpenSSL and PHP-FPM'
 		echo 'Check hydration_log for more details'
 		fi
+
+		printf 'Press q to quit, or press any key to go to the main menu'
+		read -r quit
+		if [ "$quit" == 'q' -a 'Q' ]; then
+			break
+		fi
 	;;
+
+	q|Q) echo 'Bye'
+	break
 
 	*)
 		echo 'Please enter a valid option'
@@ -206,9 +232,10 @@ Select database server:
 m) MySQL/MariaDB
 o) MongoDB
 p) PostgreSQL
+q) Exit
 EOF
 
-printf 'Selection [m|o|p]:'
+printf 'Selection [m|o|p|q]:'
 read -r dbserver
 
 case $dbserver in
@@ -254,6 +281,12 @@ case $dbserver in
 			fi } >> ~/hydration_log
 		echo 'MySQL successfully installed'
 		echo 'Check hydration_log for more details'
+		fi
+
+		printf 'Press q to quit, or press any key to go to the main menu'
+		read -r quit
+		if [ "$quit" == 'q' -a 'Q' ]; then
+			break
 		fi
 	;;
 
@@ -320,6 +353,12 @@ case $dbserver in
 	echo 'MongoDB successfully installed'
 	echo 'Check hyration_log for more details'
 	fi
+
+	printf 'Press q to quit, or press any key to go to the main menu'
+	read -r quit
+	if [ "$quit" == 'q' -a 'Q' ]; then
+		break
+	fi
 	;;
 
 	p|P)
@@ -373,7 +412,16 @@ case $dbserver in
 		echo 'PosgreSQL successfully installed'
 		echo 'Check hydration_log for more details'
 		fi
+
+		printf 'Press q to quit, or press any key to go to the main menu'
+		read -r quit
+		if [ "$quit" == 'q' -a 'Q' ]; then
+			break
+		fi
 	;;
+
+	q|Q) echo 'Bye'
+	break
 
 	*)
 		echo 'Please enter a valid option'
@@ -390,9 +438,10 @@ cat << EOF
 Select tool to install:
 m) Memcached
 v) Varnish
+q) Exit
 EOF
 
-printf 'Selection [m|v]:'
+printf 'Selection [m|v|q]:'
 read -r performance
 
 case $performance in
@@ -449,6 +498,12 @@ case $performance in
 		echo "Memcached successfully installed and $srv restarted"
 		echo 'Check hydration_log for more details'
 		fi
+
+		printf 'Press q to quit, or press any key to go to the main menu'
+		read -r quit
+		if [ "$quit" == 'q' -a 'Q' ]; then
+			break
+		fi
 	;;
 
 	v|V)
@@ -499,7 +554,16 @@ case $performance in
 		echo 'Varnish successfully installed'
 		echo "Modify the vhosts for your webserver $srv and check hydration_log for more details"
 		fi
+
+		printf 'Press q to quit, or press any key to go to the main menu'
+		read -r quit
+		if [ "$quit" == 'q' -a 'Q' ]; then
+			break
+		fi
 	;;
+
+	q|Q) echo 'Bye'
+	break
 
 	*)
 		echo 'Please select a valid option'
@@ -507,8 +571,13 @@ case $performance in
 	esac
 ;;
 
+0) echo "Bye"
+break
+;;
+
 *)
 	echo 'Please select a valid option'
 ;;
 esac
 fi
+done
