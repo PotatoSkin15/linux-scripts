@@ -13,7 +13,7 @@ if [ "$USER" != "root" ]; then
 		echo 'WARNING! This script should be run as root'
 		echo 'Please enter sudo su and run the script again'
 else
-	if [ "$OS" == 'centos' -a 'redhat' -a "el.uek" -a 'fedora' -a 'amzn' ]; then
+	if [ "$OS" == 'centos' -a 'redhat' -a "el\.uek" -a 'fedora' -a 'amzn' ]; then
 	echo 'Red Hat Derivative Detected'
 	echo 'Processing...'
 	{
