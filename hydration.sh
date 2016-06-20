@@ -3,7 +3,7 @@
 clear
 
 # Check distribution before installing packages
-OS=`grep -Eiom 1 'CentOS|RedHat|euk|Ubuntu|Fedora|SUSE|amzn' /proc/version`
+OS=`grep -Eiom 1 'CentOS|RedHat|uek|Ubuntu|Fedora|SUSE|amzn' /proc/version`
 
 # Check for Systemd vs sysvinit
 SYS=`ps -p 1 | grep -Eiom 1 'systemd|init'`
@@ -44,7 +44,7 @@ read -r webserver
 
 case $webserver in
 	a|A)
-		if [ "$OS" == 'centos' -a 'redhat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
+		if [ "$OS" == 'centos' -o 'redhat' -o 'uek' -o 'fedora' -o 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing Apache...'
 			{ # Installs base Apache stack
@@ -91,13 +91,13 @@ case $webserver in
 
 		printf 'Press q to quit, or press any key to go to the main menu'
 		read -r quit
-		if [ "$quit" == 'q' -a 'Q' ]; then
+		if [ "$quit" == 'q' -o 'Q' ]; then
 			break
 		fi
 	;;
 
 	l|L)
-		if [ "$OS" == 'centos' -a 'redhat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
+		if [ "$OS" == 'centos' -o 'redhat' -o 'uek' -o 'fedora' -o 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing Lighttpd...'
 			{ # Installs Lighttpd
@@ -150,13 +150,13 @@ case $webserver in
 
 		printf 'Press q to quit, or press any key to go to the main menu'
 		read -r quit
-		if [ "$quit" == 'q' -a 'Q' ]; then
+		if [ "$quit" == 'q' -o 'Q' ]; then
 			break
 		fi
 	;;
 
 	n|N)
-		if [ "$OS" == 'centos' -a 'redhat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
+		if [ "$OS" == 'centos' -o 'redhat' -o 'uek' -o 'fedora' -o 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing nginx...'
 			{ # Installs base nginx stack
@@ -211,7 +211,7 @@ case $webserver in
 
 		printf 'Press q to quit, or press any key to go to the main menu'
 		read -r quit
-		if [ "$quit" == 'q' -a 'Q' ]; then
+		if [ "$quit" == 'q' -o 'Q' ]; then
 			break
 		fi
 	;;
@@ -240,7 +240,7 @@ read -r dbserver
 
 case $dbserver in
 	m|M)
-		if [ "$OS" == 'centos' -a 'redhat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
+		if [ "$OS" == 'centos' -o 'redhat' -o 'uek' -o 'fedora' -o 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing MySQL/MariaDB...'
 			{ # Installs MySQL server
@@ -285,13 +285,13 @@ case $dbserver in
 
 		printf 'Press q to quit, or press any key to go to the main menu'
 		read -r quit
-		if [ "$quit" == 'q' -a 'Q' ]; then
+		if [ "$quit" == 'q' -o 'Q' ]; then
 			break
 		fi
 	;;
 
 	o|O)
-		if [ "$OS" == 'centos' -a 'redhat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
+		if [ "$OS" == 'centos' -o 'redhat' -o 'uek' -o 'fedora' -o 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing MongoDB...'
 			{ # Installs MongoDB Repo and updates Yum
@@ -356,13 +356,13 @@ case $dbserver in
 
 	printf 'Press q to quit, or press any key to go to the main menu'
 	read -r quit
-	if [ "$quit" == 'q' -a 'Q' ]; then
+	if [ "$quit" == 'q' -o 'Q' ]; then
 		break
 	fi
 	;;
 
 	p|P)
-		if [ "$OS" == 'centos' -a 'redhat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
+		if [ "$OS" == 'centos' -o 'redhat' -o 'uek' -o 'fedora' -o 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing PostgreSQL (PGSQL)...'
 			{ # Installs PostgreSQL/PGSQL
@@ -415,7 +415,7 @@ case $dbserver in
 
 		printf 'Press q to quit, or press any key to go to the main menu'
 		read -r quit
-		if [ "$quit" == 'q' -a 'Q' ]; then
+		if [ "$quit" == 'q' -o 'Q' ]; then
 			break
 		fi
 	;;
@@ -446,7 +446,7 @@ read -r performance
 
 case $performance in
 	m|M)
-		if [ "$OS" == 'centos' -a 'RedHat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
+		if [ "$OS" == 'centos' -o 'RedHat' -o 'uek' -o 'fedora' -o 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing Memcached...'
 			{ # Installs Memcached and Memcached PHP module
@@ -501,13 +501,13 @@ case $performance in
 
 		printf 'Press q to quit, or press any key to go to the main menu'
 		read -r quit
-		if [ "$quit" == 'q' -a 'Q' ]; then
+		if [ "$quit" == 'q' -o 'Q' ]; then
 			break
 		fi
 	;;
 
 	v|V)
-		if [ "$OS" == 'centos' -a 'RedHat' -a 'euk' -a 'fedora' -a 'amzn' ]; then
+		if [ "$OS" == 'centos' -o 'RedHat' -o 'uek' -o 'fedora' -o 'amzn' ]; then
 			echo 'RHEL-Based OS Detected'
 			echo 'Installing Varnish...'
 			{ # Install Varnish
@@ -557,7 +557,7 @@ case $performance in
 
 		printf 'Press q to quit, or press any key to go to the main menu'
 		read -r quit
-		if [ "$quit" == 'q' -a 'Q' ]; then
+		if [ "$quit" == 'q' -o 'Q' ]; then
 			break
 		fi
 	;;
