@@ -35,7 +35,7 @@ else
 		rpm -K webtatic-release.rpm
 		rpm -Uvh webtatic-release.rpm
 		yum update
-	} >> ~/flightcheck_log
+	} &> ~/flightcheck_log
 	echo 'Done. Check flightcheck_log for more details'
 
 	elif [ "$OS" == 'fedora' ]; then
@@ -57,7 +57,7 @@ else
 		# Installs development tools
 		dnf -y groupinstall "Development Tools and Libraries"
 
-	} >> ~/flightcheck_log
+	} &> ~/flightcheck_log
 
 	echo 'Done. Check flightcheck_log for more details'
 
@@ -74,7 +74,7 @@ else
 		# Install development tools
 		apt-get -y install build-essential
 
-	} >> ~/flightcheck_log
+	} &> ~/flightcheck_log
 	echo 'Done. Check flighcheck_log for more details'
 
 	elif [ "$OS" == 'SUSE' ]; then
@@ -89,7 +89,7 @@ else
 
 		# Install development tools
 		zypper -n devel_basis
-	} >> ~/flightcheck_log
+	} &> ~/flightcheck_log
 	echo 'Done. Check flightcheck_log for more details.'
 
 	else
