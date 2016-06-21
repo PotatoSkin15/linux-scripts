@@ -55,7 +55,7 @@ else
 		dnf -y install git vim htop wget openssh-server net-tools zip bzip2
 
 		# Installs development tools
-		dnf -y groupinstall "Development Tools and Libraries"
+		dnf -y groupinstall "Development Tools"
 
 	} &> ~/flightcheck_log
 
