@@ -14,7 +14,7 @@ if [ "$USER" != "root" ]; then
 		echo 'Please enter sudo su and run the script again'
 else
 	if [[ "$OS" == 'centos' || "$OS" == 'redhat' || "$OS" == 'ol' || "$OS" == 'fedora' || "$OS" == 'amzn' ]]; then
-	echo 'Red Hat Derivative Detected'
+	echo 'RHEL-Based OS Detected'
 	echo 'Processing...'
 	{
 	  # Update everything currently installed
@@ -65,7 +65,7 @@ else
 		zypper -n in git vim htop wget openssh net-tools zip bzip2
 
 		# Install development tools
-		zypper -n --type pattern devel_basis
+		zypper -n devel_basis
 	} >> ~/flightcheck_log
 	echo 'Done. Check flightcheck_log for more details.'
 
