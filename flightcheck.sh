@@ -55,10 +55,11 @@ else
 		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
 
 		# Installs basics for ease of use
-		dnf -y install git vim htop wget openssh-server net-tools zip bzip2
+		dnf -y install git vim htop wget openssh-server net-tools zip bzip2 kernel-devel
 
 		# Installs development tools
 		dnf -y groupinstall "Development Tools"
+		dnf -y groupinstall "C Development Tools and Libraries"
 
 	} &> ~/flightcheck_log
 
@@ -78,7 +79,7 @@ else
 		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
 
 		# More basics that should be installed for ease of use
-		yum -y install git vim htop wget openssh net-tools epel-release firewalld zip bzip2
+		yum -y install git vim htop wget openssh net-tools epel-release firewalld zip bzip2 kernel-uek-devel
 
 		yum -y groupinstall 'Development Tools'
 	} &> ~/flightcheck_log
@@ -108,7 +109,7 @@ elif [ "$OS" == 'suse' ]; then
 		zypper -n ref && zypper -n up
 
 		# Install basics for ease of use
-		zypper -n in git vim htop wget openssh net-tools zip bzip2
+		zypper -n in git vim htop wget openssh net-tools zip bzip2 kernel-default-devel
 
 		# Install development tools
 		zypper -n -t pattern devel_basis
