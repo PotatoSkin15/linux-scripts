@@ -13,7 +13,7 @@ if [ "$USER" != "root" ]; then
 		echo 'WARNING! This script should be run as root'
 		echo 'Please enter sudo su and run the script again'
 else
-	if [[ "$OS" == 'centos' || "$OS" == 'redhat' || "$OS" == 'ol' || "$OS" == 'amzn' ]]; then
+	if [[ "$OS" == 'centos' || "$OS" == 'redhat' || "$OS" == 'amzn' ]]; then
 	echo 'RHEL-Based OS Detected'
 	echo 'Processing...'
 	{
@@ -28,6 +28,9 @@ else
 
 		# More basics that should be installed for ease of use
 		yum -y install git vim htop wget openssh net-tools epel-release firewalld zip bzip2
+
+		# Install Development tools
+		yum -y groupinstall 'Development Tools'
 
 		# Webtatic
 		wget https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
@@ -59,6 +62,26 @@ else
 
 	} &> ~/flightcheck_log
 
+	echo 'Done. Check flightcheck_log for more details'
+
+	elif [ "$OS" == 'ol' ]; then
+	echo 'Oracle Linux Detected'
+	echo 'Processing...'
+	{
+		# Update everything currently installed
+		yum -y update
+
+		# Turn off SELinux for now
+		setenforce 0
+
+		# Shut off SELinux if not already
+		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
+
+		# More basics that should be installed for ease of use
+		yum -y install git vim htop wget openssh net-tools epel-release firewalld zip bzip2
+
+		yum -y groupinstall 'Development Tools'
+	} &> ~/flightcheck_log
 	echo 'Done. Check flightcheck_log for more details'
 
 	elif [ "$OS" == 'ubuntu' ]; then
