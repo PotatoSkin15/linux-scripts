@@ -16,6 +16,7 @@ else
 	if [[ "$OS" == 'centos' || "$OS" == 'redhat' || "$OS" == 'amzn' ]]; then
 	echo 'RHEL-Based OS Detected'
 	echo 'Processing...'
+	ver=`grep -Eiom 1 'el6|el7' /proc/version | head -1`
 	{
 	  # Update everything currently installed
 		yum -y update
@@ -32,12 +33,22 @@ else
 		# Install Development tools
 		yum -y groupinstall 'Development Tools'
 
-		# Webtatic
-		wget https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
-		rpm --import https://mirror.webtatic.com/yum/RPM-GPG-KEY-webtatic-el7
-		rpm -K webtatic-release.rpm
-		rpm -Uvh webtatic-release.rpm
-		yum update
+		if [ "$ver" == 'el7' ]; then
+			# Webtatic
+			wget https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
+			rpm --import https://mirror.webtatic.com/yum/RPM-GPG-KEY-webtatic-el7
+			rpm -K webtatic-release.rpm
+			rpm -Uvh webtatic-release.rpm
+			yum update
+
+		elif [ "$ver" == 'el6' ]; then
+			# Webtatic
+			wget https://mirror.webtatic.com/yum/el6/latest.rpm
+			rpm --import https://mirror.webtatic.com/yum/RPM-GPG-KEY-webtatic-andy
+			rpm -K latest.rpm
+			rpm -Uvh latest.rpm
+			yum update
+		fi
 	} &> ~/flightcheck_log
 	echo 'Done. Check flightcheck_log for more details'
 
