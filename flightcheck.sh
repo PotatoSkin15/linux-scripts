@@ -45,17 +45,11 @@ else
 		# Update everything currently installed
 		apt-get -y update && apt-get -y upgrade
 
-		# Turn off SELinux for now
-		setenforce 0
-
 		# Install basics for ease of use
-		apt-get -y install git vim htop wget openssh net-tools zip bzip2
-
-		# Shut off SELinux if not already
-		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
+		apt-get -y install git vim htop wget openssh-server net-tools zip bzip2
 
 		# Install development tools
-		apt-get -y install build-essentials
+		apt-get -y install build-essential
 
 	} >> ~/flightcheck_log
 	echo 'Done. Check flighcheck_log for more details'
