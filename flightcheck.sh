@@ -111,7 +111,7 @@ elif [ "$OS" == 'suse' ]; then
 		zypper -n in git vim htop wget openssh net-tools zip bzip2
 
 		# Install development tools
-		zypper -n devel_basis
+		zypper -n -t pattern devel_basis
 	} &> ~/flightcheck_log
 	echo 'Done. Check flightcheck_log for more details.'
 
