@@ -14,7 +14,13 @@ if [ "$USER" != "root" ]; then
 		echo 'Please enter sudo su and run the script again'
 else
 	if [[ "$OS" == 'centos' || "$OS" == 'redhat' || "$OS" == 'amzn' ]]; then
-	echo 'RHEL-Based OS Detected'
+		if [ "$OS" == 'centos' ]; then
+			echo 'CentOS Detected'
+		elif [ "$OS" == 'redhat' ]; then
+			echo 'RHEL Detected'
+		elif [ "$OS" == 'amzn' ]; then
+			echo 'Amazon Linux AMI Detected'
+		fi
 	echo 'Processing...'
 	ver=`grep -Eiom 1 'el6|el7' /proc/version | head -1`
 	{
@@ -28,12 +34,19 @@ else
 		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
 
 		# More basics that should be installed for ease of use
-		yum -y install git vim htop wget openssh net-tools epel-release firewalld zip bzip2
+		yum -y install git vim htop wget openssh net-tools firewalld zip bzip2
 
 		# Install Development tools
 		yum -y groupinstall 'Development Tools'
 
 		if [ "$ver" == 'el7' ]; then
+			# EPEL
+			wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+			rpm --import https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7Server
+			rpm -K epel-release-latest-7.noarch.rpm
+			rpm -Uvh epel-release-latest-7.noarch.rpm
+			yum update
+
 			# Webtatic
 			wget https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
 			rpm --import https://mirror.webtatic.com/yum/RPM-GPG-KEY-webtatic-el7
@@ -42,6 +55,13 @@ else
 			yum update
 
 		elif [ "$ver" == 'el6' ]; then
+			# EPEL
+			wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+			rpm --import https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6Server
+			rpm -K epel-release-latest-6.noarch.rpm
+			rpm -Uvh epel-release-latest-6.noarch.rpm
+			yum update
+
 			# Webtatic
 			wget https://mirror.webtatic.com/yum/el6/latest.rpm
 			rpm --import https://mirror.webtatic.com/yum/RPM-GPG-KEY-webtatic-andy
