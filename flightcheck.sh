@@ -100,7 +100,7 @@ else
 	} &> ~/flightcheck_log
 	echo 'Done. Check flighcheck_log for more details'
 
-	elif [ "$OS" == 'SUSE' ]; then
+elif [ "$OS" == 'suse' ]; then
 	echo 'OpenSUSE Detected'
 	echo 'Processing...'
 	{
