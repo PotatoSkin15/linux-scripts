@@ -79,6 +79,9 @@ else
 		# Update everything currently installed
 		dnf check-update && dnf -y upgrade
 
+		# Installs tools needed to parse yum commands to dnf
+		dnf install python-dnf-plugins-extras-migrate && dnf-2 migrate
+
 		# Turn off SELinux for now
 		setenforce 0
 
@@ -87,6 +90,7 @@ else
 
 		# Installs basics for ease of use
 		dnf -y install git vim htop wget openssh-server net-tools zip bzip2 kernel-devel
+		dnf -y update
 
 		# Installs development tools
 		dnf -y groupinstall "Development Tools"
