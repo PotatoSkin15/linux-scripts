@@ -101,7 +101,7 @@ case $webserver in
 			echo 'OpenSUSE Detected'
 			echo 'Installing Apache...'
 			{ #Installs base Apache stack
-			zypper -n in -R apache2 apache2-utils php5 apache2-mod_php5 openssl openssl-devel
+			zypper -n ref && zypper -n in -R apache2 apache2-utils php5 apache2-mod_php5 openssl openssl-devel
 			mkdir /etc/apache2/sites-available && /etc/apache2/sites-enabled
 			# Enable PHP module for Apache
 			a2enmod php5
@@ -184,7 +184,7 @@ case $webserver in
 			echo 'OpenSUSE Detected'
 			echo 'Installing Lighttpd...'
 			{ # Installs Lighttpd
-			zypper -n -R in lighttpd apache2-utils php5 php5-fpm openssl openssl-devel
+			zypper -n ref && zypper -n in -R lighttpd apache2-utils php5 php5-fpm openssl openssl-devel
 			mkdir /etc/lighttpd/sites-available && /etc/lighttpd/sites-enabled
 			# Rename PHP-FPM Directory
 			mv /etc/php5/fpm/php-fpm.conf.default /etc/php5/fpm/php-fpm.conf
@@ -274,7 +274,7 @@ case $webserver in
 			echo 'OpenSUSE Detected'
 			echo 'Installing nginx...'
 			{ # Installs base nginx stack
-			zypper -n -R in nginx-1.0 php5 php5-fpm openssl openssl-devel
+			zypper -n ref && zypper -n in -R nginx-1.0 php5 php5-fpm openssl openssl-devel
 			mkdir /etc/nginx/sites-available && /etc/nginx/sites-enabled
 			# Rename PHP-FPM Directory
 			mv /etc/php5/fpm/php-fpm.conf.default /etc/php5/fpm/php-fpm.conf
@@ -377,7 +377,7 @@ case $dbserver in
 			echo 'OpenSUSE Detected'
 			echo 'Installing MySQL/MariaDB...'
 			{ # Installs MySQL/MariaDB server
-			zypper -n -R in mariadb mariadb-tools php5-mysql
+			zypper -n ref && zypper -n in -R mariadb mariadb-tools php5-mysql
 			# Starts MariaDB/MySQL with Systemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start mysql && systemctl enable mysql
@@ -457,7 +457,7 @@ case $dbserver in
 		zypper -n addrepo --no-gpgcheck https://repo.mongodb.org/zypper/suse/$(sed -rn 's/VERSION=.*([0-9]{2}).*/\1/p' /etc/os-release)/mongodb-org/3.2/x86_64/ mongodb
 
 		# Refresh zypper cache and install MongoDB
-		zypper -n ref && zypper -n in mongodb-org
+		zypper -n ref && zypper -n in -R mongodb-org
 
 		# Start MongoDB with Systemd or init script
 		if [ "$SYS" == 'systemd' ]; then
@@ -538,8 +538,7 @@ case $dbserver in
 			echo 'Installing PostgreSQL (PGSQL)...'
 			{ # Installs PostgreSQL/PGSQL
 			zypper -n addrepo -t YUM http://packages.2ndquadrant.com/postgresql-z-suse/zypper/sles-11sp3-s390x pg
-			zypper -n refresh
-			zypper -n -R in postgresql-server
+			zypper -n refresh && zypper -n in -R postgresql-server
 			# Initializes DB
 			service postgresql initdb
 			# Starts PGSQL with systemd or init script
@@ -646,7 +645,7 @@ case $performance in
 			echo 'Installing Memcached...'
 			{ # Installs Memcached and Memcached PHP module
 			yast2 -i memcached
-			zypper -n refresh && zypper -n -R in php-pecl
+			zypper -n refresh && zypper -n in -R php-pecl
 			pecl install memcache
 			# Add Memcached module to load with PHP
 			echo 'extension=memcache.so' >> /etc/php5/conf.d/memcache.ini
@@ -729,7 +728,7 @@ case $performance in
 			echo 'Installing Varnish...'
 			{ # Add repo and install Varnish
 			zypper -n addrepo http://download.OpenSUSE.org/repositories/server:http/OpenSUSE_Tumbleweed/server:http.repo
-			zypper -n refresh && zypper -n install varnish
+			zypper -n refresh && zypper -n in -R varnish
 			# Start Varnish with systemd or init script
 				if [ "$SYS" == 'systemd' ]; then
 					systemctl start varnish && systemctl enable varnish
