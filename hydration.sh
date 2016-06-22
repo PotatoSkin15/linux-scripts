@@ -238,13 +238,7 @@ case $webserver in
 		elif [ "$OS" == 'fedora' ]; then
 			echo 'Fedora detected'
 			echo 'Instaling nginx...'
-			{ # Installs Remi repo
-			wget http://rpms.famillecollet.com/fedora/remi-release-23.rpm
-			rpm --import http://rpms.remirepo.net/RPM-GPG-KEY-remi
-			rpm -K remi-release-23.rpm
-			rpm -Uvh remi-release-23.rpm
-
-			# Installs base nginx stack
+			{ # Installs base nginx stack
 			dnf -y --enablerepo=remi install nginx php php-common php-fpm php-gd php-xmlrpc php-xml openssl openssl-devel
 			mkdir /etc/nginx/sites-available && mkdir /etc/nginx/sites-enabled
 			echo "include /etc/nginx/sites-enabled/*;" >> /etc/nginx/nginx.conf
