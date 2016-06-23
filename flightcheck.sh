@@ -34,7 +34,7 @@ else
 		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
 
 		# More basics that should be installed for ease of use
-		yum -y install git vim htop wget openssh net-tools firewalld zip bzip2
+		yum -y install git vim htop wget openssh net-tools firewalld zip bzip2 curl
 
 		# Install Development tools
 		yum -y groupinstall 'Development Tools'
@@ -77,7 +77,7 @@ else
 	echo 'Processing...'
 	{
 		# Update everything currently installed
-		dnf check-update && dnf -y upgrade
+		dnf check-update && dnf -y update
 
 		# Installs tools needed to parse yum commands to dnf
 		dnf install python-dnf-plugins-extras-migrate && dnf-2 migrate
@@ -89,8 +89,7 @@ else
 		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
 
 		# Installs basics for ease of use
-		dnf -y install git vim htop wget openssh-server net-tools zip bzip2 kernel-devel
-		dnf -y update
+		dnf -y install git vim htop wget openssh-server net-tools zip bzip2 kernel-devel curl
 
 		# Installs development tools
 		dnf -y groupinstall "Development Tools"
@@ -114,7 +113,7 @@ else
 		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
 
 		# More basics that should be installed for ease of use
-		yum -y install git vim htop wget openssh net-tools epel-release firewalld zip bzip2 kernel-uek-devel
+		yum -y install git vim htop wget openssh net-tools epel-release firewalld zip bzip2 kernel-uek-devel curl
 
 		yum -y groupinstall 'Development Tools'
 	} &> ~/flightcheck_log
@@ -128,7 +127,7 @@ else
 		apt-get -y update && apt-get -y upgrade
 
 		# Install basics for ease of use
-		apt-get -y install git vim htop wget openssh-server net-tools firewalld zip bzip2
+		apt-get -y install git vim htop wget openssh-server net-tools firewalld zip bzip2 curl
 
 		# Install development tools
 		apt-get -y install build-essential
@@ -144,7 +143,7 @@ elif [ "$OS" == 'suse' ]; then
 		zypper -n ref && zypper -n up
 
 		# Install basics for ease of use
-		zypper -n in -R git vim htop wget openssh net-tools zip bzip2 kernel-default-devel
+		zypper -n in -R git vim htop wget openssh net-tools zip bzip2 kernel-default-devel curl
 
 		# Install development tools
 		zypper -n in -R -t pattern devel_basis
