@@ -419,7 +419,11 @@ case $dbserver in
 			gpgkey=https://www.mongodb.org/static/pgp/server-3.2.asc" >> /etc/yum.repos.d/mongodb.repos
 
 			# Refresh Yum cache and install MongoDB
- 			yum -y install mongodb-org mongodb-org-server
+ 			yum -y install mongodb-org mongodb-org-server php-pecl
+
+			# Installs PHP MongoDB Driver
+			pecl install mongodb
+			echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 
 			# Starts MongoDB with Systemd or init script
 			if [ "$SYS" == 'systemd' ]; then
@@ -439,7 +443,11 @@ case $dbserver in
 		echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | tee /etc/apt/sources.list.d/mongodb.list
 
 		# Update apt cache and install MongoDB
-		apt-get update && apt-get -y install mongodb-org
+		apt-get update && apt-get -y install mongodb-org php5-pecl
+
+		# Installs PHP MongoDB Driver
+		pecl install mongodb
+		echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 
 		# Start MongoDB with Systemd or init script
 		if [ "$SYS" == 'systemd' ]; then
@@ -457,7 +465,11 @@ case $dbserver in
 		zypper -n addrepo --no-gpgcheck https://repo.mongodb.org/zypper/suse/$(sed -rn 's/VERSION=.*([0-9]{2}).*/\1/p' /etc/os-release)/mongodb-org/3.2/x86_64/ mongodb
 
 		# Refresh zypper cache and install MongoDB
-		zypper -n ref && zypper -n in -R mongodb-org
+		zypper -n ref && zypper -n in -R mongodb-org php-pecl
+
+		# Installs PHP MongoDB Driver
+		pecl install mongodb
+		echo "extension=mongodb.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
 
 		# Start MongoDB with Systemd or init script
 		if [ "$SYS" == 'systemd' ]; then
@@ -538,7 +550,7 @@ case $dbserver in
 			echo 'Installing PostgreSQL (PGSQL)...'
 			{ # Installs PostgreSQL/PGSQL
 			zypper -n addrepo -t YUM http://packages.2ndquadrant.com/postgresql-z-suse/zypper/sles-11sp3-s390x pg
-			zypper -n refresh && zypper -n in -R postgresql-server
+			zypper -n refresh && zypper -n in -R postgresql-server postgresql-libs php-pgsql
 			# Initializes DB
 			service postgresql initdb
 			# Starts PGSQL with systemd or init script
