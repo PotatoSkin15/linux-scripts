@@ -8,13 +8,11 @@ OS=`grep -Eiom 1 'CentOS|RedHat|ol|Ubuntu|Fedora|suse|amzn' /proc/version | head
 # Check for Systemd vs sysvinit
 SYS=`ps -p 1 | grep -Eiom 1 'systemd|init'`
 
-loop=0
-
 if [ "$USER" != 'root' ]; then
 		echo 'WARNING! This script should be run as root'
 		echo 'Please enter sudo su and run the script again'
 else
-while [ "$loop" == 0 ]; do
+
 echo 'Make sure you run flightcheck.sh first'
 sleep 5
 cat << EOF
@@ -587,11 +585,12 @@ clear
 cat << EOF
 Select tool to install:
 m) Memcached
+r) Redis
 v) Varnish
 q) Exit
 EOF
 
-printf 'Selection [m|v|q]:'
+printf 'Selection [m|r|v|q]:'
 read -r performance
 
 case $performance in
@@ -679,6 +678,94 @@ case $performance in
 			break
 		fi
 	;;
+
+	r|R)
+		if [ "$OS" == 'centos' || "$OS" == 'redhat' || "$OS" == 'ol' || "$OS" == 'amzn' || "$OS" == 'fedora' ]; then
+			if [ "$OS" == 'centos']; then
+			  echo 'CentOS Detected'
+			elif [ "$OS" == 'redhat' ]; then
+			  echo 'RHEL Detected'
+			elif [ "$OS" == 'ol' ]; then
+			  echo 'Oracle Linux Detected'
+			elif [ "$OS" == 'amzn' ]; then
+			  echo 'Amazon Linux AMI Detected'
+			elif [ "$OS" == 'fedora' ]; then
+				echo 'Fedora Detected'
+			fi
+			echo 'Installing Redis...'
+			{ # Grabs tarball and extracts to /tmp
+			curl -sSL http://download.redis.io/releases/redis-stable.tar.gz -o /tmp/redis.tar.gz
+			tar xzf redis.tar.gz
+
+			# Creates make file and installs Redis
+			make -C /tmp/redis-stable
+			make -C /tmp/redis-stable install
+			echo -n | /tmp/redis/utils/install_server.sh
+			rm -rf /tmp/redis*
+
+			sysctl vm.overcommit_memory=1
+			sed -i -e 's/# bind 127.0.0.1/bind 127.0.0.1/g' /etc/redis/6379.conf
+
+			if [ "$SYS" == 'systemd' ]; then
+				systemctl start redis_6379 && systemctl enable redis_6379
+			elif [ "$SYS" == 'init' ]; then
+				service redis_6379 start && chkconfig redis_6379 on
+			fi } &> ~/hydration_log
+
+		echo 'Redis successfully installed'
+		echo 'Check hydration_log for more details'
+
+		elif [ "$OS" == 'ubuntu' ]; then
+			echo 'Ubuntu Detected'
+			echo 'Installing Redis...'
+			{ # Grabs tarball and extracts to /tmp
+			curl -sSL http://download.redis.io/releases/redis-stable.tar.gz -o /tmp/redis.tar.gz
+			tar xzf redis.tar.gz
+
+			# Creates make file and installs Redis
+			make -C /tmp/redis-stable
+			make -C /tmp/redis-stable install
+			echo -n | /tmp/redis/utils/install_server.sh
+			rm -rf /tmp/redis*
+
+			sysctl vm.overcommit_memory=1
+			sed -i -e 's/# bind 127.0.0.1/bind 127.0.0.1/g' /etc/redis/6379.conf
+
+			if [ "$SYS" == 'systemd' ]; then
+				systemctl start redis_6379 && systemctl enable redis_6379
+			elif [ "$SYS" == 'init' ]; then
+				service redis_6379 start && chkconfig redis_6379 on
+			fi } &> ~/hydration_log
+
+		echo 'Redis successfully installed'
+		echo 'Check hydration_log for more details'
+
+		elif [ "$OS" == 'suse' ]; then
+			echo 'OpenSUSE Detected'
+			echo 'Installing Redis...'
+			{ # Grabs tarball and extracts to /tmp
+			curl -sSL http://download.redis.io/releases/redis-stable.tar.gz -o /tmp/redis.tar.gz
+			tar xzf redis.tar.gz
+
+			# Creates make file and installs Redis
+			make -C /tmp/redis-stable
+			make -C /tmp/redis-stable install
+			echo -n | /tmp/redis/utils/install_server.sh
+			rm -rf /tmp/redis*
+
+			sysctl vm.overcommit_memory=1
+			sed -i -e 's/# bind 127.0.0.1/bind 127.0.0.1/g' /etc/redis/6379.conf
+
+			if [ "$SYS" == 'systemd' ]; then
+				systemctl start redis_6379 && systemctl enable redis_6379
+			elif [ "$SYS" == 'init' ]; then
+				service redis_6379 start && chkconfig redis_6379 on
+			fi } &> ~/hydration_log
+
+		echo 'Redis successfully installed'
+		echo 'Check hydration_log for more details'
+
+		fi
 
 	v|V)
 		if [[ "$OS" == 'centos' || "$OS" == 'redhat' || "$OS" == 'ol' || "$OS" == 'fedora' || "$OS" == 'amzn' ]]; then
@@ -776,4 +863,3 @@ break
 ;;
 esac
 fi
-done
