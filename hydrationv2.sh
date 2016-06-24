@@ -718,7 +718,10 @@ case $choice in
         elif [ "$SYS" == 'init' ]; then
           service varnish start && chkconfig varnish on
         fi } &> ~/hydration_log
+
     echo 'Varnish successfully installed'
     echo "Modify the vhosts for your webserver $srv and check hydration_log for more details"
   fi
 ;;
+
+done
