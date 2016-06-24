@@ -12,7 +12,7 @@ SYS=`ps -p 1 | grep -Eiom 1 'systemd|init'`
 srv=`ls /etc | grep -Eiom 1 'Apache2|httpd|nginx|lighttpd'`
 
 # Sets variables for dialog box
-cmd=(dialog --separate-output --checklist "Select software to install:" 22 76 16)
+cmd=(dialog --separate-output --checklist "Select packages to install:" 22 76 16)
 options=(1 "Apache" off
          2 "Lighttpd" off
          3 "nginx" off
@@ -50,7 +50,7 @@ else
 fi
 
 echo 'Make sure you run flightcheck.sh first'
-sleep 5
+sleep 2
 choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 clear
 
