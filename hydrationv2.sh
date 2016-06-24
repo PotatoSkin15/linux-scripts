@@ -287,7 +287,7 @@ case $choice in
 ;;
 
 4)
-  if [ "$OS" == 'centos' || "$OS" == 'redhat' || "$OS" == 'ol' || "$OS" == 'amzn' ]; then
+  if [[ "$OS" == 'centos' || "$OS" == 'redhat' || "$OS" == 'ol' || "$OS" == 'amzn' ]]; then
     echo 'Installing MySQL/MariaDB...'
     { # Installs MySQL server and PHP Driver
       yum -y install mysql mysql-server php-mysql
@@ -577,7 +577,7 @@ case $choice in
 ;;
 
 8)
-  if [ "$OS" == 'centos' || "$OS" == 'redhat' || "$OS" == 'ol' || "$OS" == 'amzn' || "$OS" == 'fedora' ]; then
+  if [[ "$OS" == 'centos' || "$OS" == 'redhat' || "$OS" == 'ol' || "$OS" == 'amzn' || "$OS" == 'fedora' ]]; then
     echo 'Installing Redis...'
     { # Grabs tarball and extracts to /tmp
       curl -sSL http://download.redis.io/releases/redis-stable.tar.gz -o /tmp/redis.tar.gz
