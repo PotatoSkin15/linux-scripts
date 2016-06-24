@@ -726,6 +726,6 @@ case $choice in
 
 esac
 
-fi
-
 done
+
+fi
