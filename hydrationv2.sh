@@ -3,7 +3,7 @@
 clear
 
 # Check distribution before installing packages
-OS=`grep -Eiom 1 'CentOS|RedHat|ol|Ubuntu|Fedora|suse|amzn' /proc/version | head -1 | tr '[:upper:]' '[:lower:]'`
+OS=`grep -Eiom 1 'CentOS|RedHat|ol|Ubuntu|debian|Fedora|suse|amzn' /proc/version | head -1 | tr '[:upper:]' '[:lower:]'`
 
 # Check for Systemd vs sysvinit
 SYS=`ps -p 1 | grep -Eiom 1 'systemd|init'`
@@ -38,6 +38,8 @@ elif [ "$OS" == 'amzn' ]; then
   echo 'Amazon Linux AMI Detected'
 elif [ "$OS" == 'ubuntu' ]; then
   echo 'Ubuntu Detected'
+elif [ "$OS" == 'debian' ]; then
+  echo 'Debian Detected'
 elif [ "$OS" == 'fedora' ]; then
   echo 'Fedora Detected'
 elif [ "$OS" == 'suse' ]; then

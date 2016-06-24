@@ -3,10 +3,28 @@
 clear
 
 # Check distribution before installing packages
-OS=`grep -Eiom 1 'CentOS|RedHat|ol|Ubuntu|Fedora|SUSE|amzn' /proc/version | head -1 | tr '[:upper:]' '[:lower:]'`
+OS=`grep -Eiom 1 'CentOS|RedHat|ol|Ubuntu|debian|Fedora|SUSE|amzn' /proc/version | head -1 | tr '[:upper:]' '[:lower:]'`
 
 # Check for Systemd vs sysvinit
 SYS=`ps -p 1 | grep -Eiom 1 'systemd|init'`
+
+if [ "$OS" == 'centos' ]; then
+	echo 'CentOS Detected'
+elif [ "$OS" == 'redhat' ]; then
+	echo 'RHEL Detected'
+elif [ "$OS" == 'amzn' ]; then
+	echo 'Amazon Linux AMI Detected'
+elif [ "$OS" == 'fedora' ]; then
+	echo 'Fedora Detected'
+elif [ "$OS" == 'ol' ]; then
+	echo 'Oracle Linux Detected'
+elif [ "$OS" == 'ubuntu' ]; then
+	echo 'Ubuntu Detected'
+elif [ "$OS" == 'debian' ]; then
+	echo 'Debian Detected'
+elif [ "$OS" == 'suse' ]; then
+	echo 'OpenSUSE Detected'
+fi
 
 # Check if user is root, if not tells them to sudo su
 if [ "$USER" != "root" ]; then
@@ -14,13 +32,6 @@ if [ "$USER" != "root" ]; then
 		echo 'Please enter sudo su and run the script again'
 else
 	if [[ "$OS" == 'centos' || "$OS" == 'redhat' || "$OS" == 'amzn' ]]; then
-		if [ "$OS" == 'centos' ]; then
-			echo 'CentOS Detected'
-		elif [ "$OS" == 'redhat' ]; then
-			echo 'RHEL Detected'
-		elif [ "$OS" == 'amzn' ]; then
-			echo 'Amazon Linux AMI Detected'
-		fi
 	echo 'Processing...'
 	ver=`grep -Eiom 1 'el6|el7' /proc/version | head -1`
 	{
@@ -73,7 +84,6 @@ else
 	echo 'Done. Check flightcheck_log for more details'
 
 	elif [ "$OS" == 'fedora' ]; then
-	echo 'Fedora Detected'
 	echo 'Processing...'
 	{
 		# Update everything currently installed
@@ -100,7 +110,6 @@ else
 	echo 'Done. Check flightcheck_log for more details'
 
 	elif [ "$OS" == 'ol' ]; then
-	echo 'Oracle Linux Detected'
 	echo 'Processing...'
 	{
 		# Update everything currently installed
@@ -119,8 +128,7 @@ else
 	} &> ~/flightcheck_log
 	echo 'Done. Check flightcheck_log for more details'
 
-	elif [ "$OS" == 'ubuntu' ]; then
-	echo 'Ubuntu Detected'
+	elif [ "$OS" == 'ubuntu' || "$OS" == 'debian']; then
 	echo 'Processing...'
 	{
 		# Update everything currently installed
@@ -135,8 +143,7 @@ else
 	} &> ~/flightcheck_log
 	echo 'Done. Check flighcheck_log for more details'
 
-elif [ "$OS" == 'suse' ]; then
-	echo 'OpenSUSE Detected'
+	elif [ "$OS" == 'suse' ]; then
 	echo 'Processing...'
 	{
 		# Update everything currently installed
