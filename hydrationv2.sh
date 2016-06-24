@@ -1,5 +1,7 @@
 #!/bin/bash
 
+clear
+
 # Check distribution before installing packages
 OS=`grep -Eiom 1 'CentOS|RedHat|ol|Ubuntu|Fedora|suse|amzn' /proc/version | head -1 | tr '[:upper:]' '[:lower:]'`
 
