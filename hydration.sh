@@ -19,7 +19,7 @@ cat << EOF
 Select your action:
 1) Install web server (Apache, Lighttpd, nginx)
 2) Install DB server (MySQL/MariaDB, MongoDB, PGSQL)
-3) Install performance tools (Memcache, Varnish)
+3) Install performance tools (Memcache, Redis, Varnish)
 0) Exit
 EOF
 
