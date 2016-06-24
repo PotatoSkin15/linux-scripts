@@ -34,7 +34,7 @@ else
 		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
 
 		# More basics that should be installed for ease of use
-		yum -y install git vim htop wget openssh net-tools firewalld zip bzip2 curl
+		yum -y install git vim htop wget openssh net-tools firewalld zip bzip2 curl dialog
 
 		# Install Development tools
 		yum -y groupinstall 'Development Tools'
@@ -89,7 +89,7 @@ else
 		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
 
 		# Installs basics for ease of use
-		dnf -y install git vim htop wget openssh-server net-tools zip bzip2 kernel-devel curl
+		dnf -y install git vim htop wget openssh-server net-tools zip bzip2 kernel-devel curl dialog
 
 		# Installs development tools
 		dnf -y groupinstall "Development Tools"
@@ -113,7 +113,7 @@ else
 		sed -i -e 's/enforcing/permissive/g' /etc/selinux/config
 
 		# More basics that should be installed for ease of use
-		yum -y install git vim htop wget openssh net-tools epel-release firewalld zip bzip2 kernel-uek-devel curl
+		yum -y install git vim htop wget openssh net-tools epel-release firewalld zip bzip2 kernel-uek-devel curl dialog
 
 		yum -y groupinstall 'Development Tools'
 	} &> ~/flightcheck_log
@@ -127,7 +127,7 @@ else
 		apt-get -y update && apt-get -y upgrade
 
 		# Install basics for ease of use
-		apt-get -y install git vim htop wget openssh-server net-tools firewalld zip bzip2 curl
+		apt-get -y install git vim htop wget openssh-server net-tools firewalld zip bzip2 curl dialog
 
 		# Install development tools
 		apt-get -y install build-essential
@@ -143,7 +143,7 @@ elif [ "$OS" == 'suse' ]; then
 		zypper -n ref && zypper -n up
 
 		# Install basics for ease of use
-		zypper -n in -R git vim htop wget openssh net-tools zip bzip2 kernel-default-devel curl
+		zypper -n in -R git vim htop wget openssh net-tools zip bzip2 kernel-default-devel curl dialog
 
 		# Install development tools
 		zypper -n in -R -t pattern devel_basis
