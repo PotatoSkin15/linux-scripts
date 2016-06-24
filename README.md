@@ -1,7 +1,7 @@
 # linux-scripts
 General Linux scripts for everyday use
 
-Supported operating systems (currently): Ubuntu (16.04, 14.04), CentOS (7,6), RHEL (7,6), Fedora (22, 23, 24), Oracle Linux (7, 6), OpenSUSE (12, 13), Amazon Linux AMI
+Supported operating systems (currently): Ubuntu, CentOS/RHEL, Fedora, Oracle Linux, OpenSUSE, Amazon Linux AMI
 
 #### flightcheck.sh:
 
