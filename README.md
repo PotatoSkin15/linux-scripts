@@ -1,6 +1,8 @@
 # linux-scripts
 General Linux scripts for everyday use
 
+Supported operating systems (currently): Ubuntu (16.04, 14.04), CentOS (7,6), RHEL (7,6), Fedora (22, 23, 24), Oracle Linux (7, 6), OpenSUSE (12, 13), Amazon Linux AMI
+
 #### flightcheck.sh:
 
 Installs basic packages for server operating systems and updates software currently installed. Good after a fresh install to make sure everything is running smoothly and is up to date.
