@@ -723,5 +723,6 @@ case $choice in
     echo "Modify the vhosts for your webserver $srv and check hydration_log for more details"
   fi
 ;;
+fi
 
 done
