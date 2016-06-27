@@ -178,7 +178,13 @@ case $choice in
       cd /var/www/wordpress && chown -R :www *
       chmod 444 /var/www/wordpress/wp-config.php
       find -type d -exec chmod 755 {} + && find -type f -exec chmod 644 {} +
-    fi } &> ~/deploycms_log
+    fi
+
+    if [ "$SYS" == 'systemd' ]; then
+      systemctl restart $srv
+    elif [ "$SYS" == 'init' ]; then
+      service $srv restart
+    fi} &> ~/deploycms_log
   echo 'Done. Check deploycms_log for more details'
 ;;
 
