@@ -162,7 +162,6 @@ case $choice in
 	        }
       }
       EOF
-      service nginx restart
       cd /var/www/wordpress && chown -R :www-data *
       chmod 444 /var/www/wordpress/wp-config.php
       find -type d -exec chmod 755 {} + && find -type f -exec chmod 644 {} +
