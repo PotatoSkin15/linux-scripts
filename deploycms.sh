@@ -21,6 +21,7 @@ user=root
 password="$sqlroot"
 EOF
 chmod 600 /root/.my.cnf
+echo 'MySQL root credentials stored in /root/.my.cnf'
 
 # Sets variables for dialog box
 cmd=(dialog --separate-output --checklist "Select software to install:" 22 76 16)
