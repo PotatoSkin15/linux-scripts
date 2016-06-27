@@ -241,6 +241,8 @@ case $choice in
     mysql -u root -p$sqlroot -e "grant all on drupal_db* to 'drupal_db_user'@'localhost' identified by '"$cmssql"'";
 
     drush site-install standard --db-url='mysql://drupal_db_user:'"$cmssql"'@localhost/drupal_db' --site-name=$sname --account-name=$uname --account-pass=$passwd
+    drush dl views ctools ckeditor pathauto jquery_update date webform module_filter token adminimal_admin_menu adminimal_theme
+    drush en -y views ctools ckeditor pathauto jquery_update date webform module_filter token adminimal_admin_menu adminimal_theme
 
     if [ "$srv" == 'apache2' || "$srv" == 'httpd' ]; then
       cat > /etc/$srv/sites-available/drupal << "EOF"
