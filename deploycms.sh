@@ -94,7 +94,7 @@ case $choice in
     # Creates MySQL DB and user
     mysql -u root password $sqlroot
     mysql -u root -p$sqlroot -e "create database wp_db";
-    mysql -u root -p$sqlroot -e "grant all on wp_db* to wp_db_user@localhost identified by '"$cmssql"'";
+    mysql -u root -p$sqlroot -e "grant all on wp_db* to 'wp_db_user'@'localhost' identified by '"$cmssql"'";
 
     cp /var/www/wordpress/wp-config-sample.php /var/www/wordpress/wp-config.php
     sed -i "s/'DB_NAME', 'database_name_here'/'DB_NAME', 'wp_db'/g" /tmp/wordpress/wp-config.php;
@@ -110,16 +110,13 @@ case $choice in
     wp core install --allow-root --url=$sname --admin_user=$uname --admin_password=$passwd --admin_email=$email
 
     if [ "$srv" == 'apache2' || "$srv" == 'httpd' ]; then
-      cat > /etc/$srv/sites-available/default << EOF
+      cat > /etc/$srv/sites-available/wp << "EOF"
       <VirtualHost *:80>
-      # Admin email, Server Name (domain name) and any aliases
       ServerName $sname
 
-      # Index file and Document Root (where the public files are located)
       DirectoryIndex index.html, index.php
       DocumentRoot /var/www/wordpress/htdocs
 
-      # Custom log file locations
       <Directory />
         Options FollowSymLinks
         AllowOverride All
@@ -136,7 +133,6 @@ case $choice in
         allow from all
       </Directory>
 
-
       ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
       <Directory "/var/www/cgi-bin">
         AllowOverride None
@@ -147,12 +143,13 @@ case $choice in
 
       </VirtualHost>
       EOF
+      ln -s /etc/$srv/sites-available/wp /etc/$srv/sites-enabled
       cd /var/www/wordpress && chown -R :apache *
       chmod 444 /var/www/wordpress/wp-config.php
       find -type d -exec chmod 755 {} + && find -type f -exec chmod 644 {} +
     elif [ "$srv" == 'nginx' ]; then
       mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
-      cat > /etc/nginx/sites-available/default << "EOF"
+      cat > /etc/nginx/sites-available/wp << "EOF"
       server {
 	        listen 80 $sname;
 	        listen [::]:80 default_server ipv6only=on;
@@ -160,11 +157,7 @@ case $choice in
 	        index index.php index.html index.htm;
 	        server_name localhost;
 	        location / {
-			         # First attempt to serve request as file, then
-		           # as directory, then fall back to displaying a 404.
 	             try_files $uri $uri/ /index.php?q=$uri&$args;
-			         # Uncomment to enable naxsi on this location
-			         # include /etc/nginx/naxsi.rules
 	        }
 
           error_page 404 /404.html;
@@ -182,6 +175,7 @@ case $choice in
 	        }
       }
       EOF
+      ln -s /etc/$srv/sites-available/wp /etc/$srv/sites-enabled
       cd /var/www/wordpress && chown -R :www-data *
       chmod 444 /var/www/wordpress/wp-config.php
       find -type d -exec chmod 755 {} + && find -type f -exec chmod 644 {} +
@@ -206,6 +200,201 @@ case $choice in
     fi} &> ~/deploycms_log
   echo 'Done. Check deploycms_log for more details'
 ;;
+
+2)
+  echo 'Installing Drupal 7...'
+  { # Install Drush, the glorious Drupal CLI tool
+    if [ "$OS" == 'ubuntu' ]; then
+      apt-get update && apt-get install drush
+    else
+      cd /opt
+      git clone https://github.com/drush-ops/drush.git
+      mkdir composer
+      cd composer
+      curl -sS https://getcomposer.org/installer | php -d suhosin.executor.include.whitelist=phar
+      cd ../drush
+      php -d suhosin.executor.include.whitelist=phar /opt/composer/composer.phar install
+      ln -s /opt/drush/drush /usr/bin/drush
+      ln -s /opt/composer/composer.phar /usr/bin/composer
+    fi
+
+    # Gets latest Druapl 7 tarball and extracts it
+    mkdir -p /var/www/drupal
+    wget https://ftp.drupal.org/files/projects/drupal-7.44.tar.gz && tar xzf drupal-7.44.tar.gz -C /var/www/drupal
+
+    # Changes group ownership for Drupal site files
+    if [ "$srv" == 'apache2' || "$srv" == 'httpd' ]; then
+      cd /var/www/drupal && chown -R :apache *
+    elif [ "$srv" == 'nginx' ]; then
+      cd /var/www/drupal && chown -R :www-data *
+    elif [ "$srv" == 'lighttpd' ]; then
+      cd /var/www/drupal && chown -R :www *
+    fi
+
+    # Copies default.settings.php to settings.php for Drupal to use and changes perms
+    cp sites/default/default.settings.php sites/default/settings.php
+    chmod 666 sites/default/settings.php && chmod g+w sites/default
+
+    # Creates MySQL DB and user
+    mysql -u root password $sqlroot
+    mysql -u root -p$sqlroot -e "create database drupal_db";
+    mysql -u root -p$sqlroot -e "grant all on drupal_db* to 'drupal_db_user'@'localhost' identified by '"$cmssql"'";
+
+    drush site-install standard --db-url='mysql://drupal_db_user:'"$cmssql"'@localhost/drupal_db' --site-name=$sname --account-name=$uname --account-pass=$passwd
+
+    if [ "$srv" == 'apache2' || "$srv" == 'httpd' ]; then
+      cat > /etc/$srv/sites-available/drupal << "EOF"
+      <VirtualHost *:80>
+      ServerName $sname
+
+      DirectoryIndex index.html, index.php
+      DocumentRoot /var/www/drupal/htdocs
+
+      <Directory />
+        Options FollowSymLinks
+        AllowOverride All
+        Order deny,allow
+        Deny from all
+        Satisfy all
+      </Directory>
+
+      AccessFileName .htaccess
+      <Directory /var/www/drupal/htdocs>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Order allow,deny
+        allow from all
+      </Directory>
+
+      ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+      <Directory "/var/www/cgi-bin">
+        AllowOverride None
+        Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+        Order allow,deny
+        Allow from all
+      </Directory>
+
+      </VirtualHost>
+      EOF
+      ln -s /etc/$srv/sites-available/drupal /etc/$srv/sites-enabled
+      cd /var/www/drupal && find -type d -exec chmod 755 {} + && find -type f -exec chmod 644 {} +
+      chown -R :apache *
+
+    elif [ "$srv" == 'nginx' ]; then
+      cat > /etc/nginx/sites-available/drupal << "EOF"
+      server {
+          server_name $sname;
+          root /var/www/drupal;
+
+          gzip_static on;
+
+          location = /favicon.ico {
+                  log_not_found off;
+                  access_log off;
+          }
+
+          location = /robots.txt {
+                  allow all;
+                  log_not_found off;
+                  access_log off;
+          }
+
+          location ~* \.(txt|log)$ {
+                  allow 192.168.0.0/16;
+                  deny all;
+          }
+
+          location ~ \..*/.*\.php$ {
+                  return 403;
+          }
+
+          location ~ ^/sites/.*/private/ {
+                  return 403;
+          }
+
+          location ~ (^|/)\. {
+                  return 403;
+          }
+
+          location / {
+                  try_files $uri @rewrite;
+          }
+
+          location @rewrite {
+                  rewrite ^ /index.php;
+          }
+
+          location ~ \.php$ {
+                  fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                  include fastcgi_params;
+                  fastcgi_param SCRIPT_FILENAME $request_filename;
+                  fastcgi_intercept_errors on;
+                  fastcgi_pass unix:/var/run/php5-fpm.sock;
+          }
+
+          location ~ ^/sites/.*/files/styles/ {
+                  try_files $uri @rewrite;
+          }
+
+          location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
+                  expires max;
+                  log_not_found off;
+          }
+      }
+      EOF
+      ln -s /etc/nginx/sites-available/drupal /etc/nginx/sites-enabled
+      cd /var/www/drupal && find -type d -exec chmod 755 {} + && find -type f -exec chmod 644 {} +
+      chown -R :www-data *
+
+    elif [ "$srv" == 'lighttpd' ]; then
+      cat > /etc/lighttpd/sites-available/drupal << "EOF"
+      $SERVER["socket"] == ":80" {
+
+        $HTTP["url"] =~ "^(/sites/(.)/files/backup_migrate/)" {
+            url.access-deny = ("")
+        }
+
+        $HTTP["url"] =~ "/files/backup_migrate/" {
+            url.access-deny = ( "" )
+        }
+
+        $HTTP["host"] =~ "(.).$sname$" {
+
+        server.document-root = "/var/www/drupal"
+        index-file.names = ( "index.php" )
+
+        url.rewrite-once = ( "^/files/(.)$" => "/sites/%0/files/$1", "^/themes/(.)$" => "/sites/%0/themes/$1")
+
+        url.rewrite-if-not-file = ("^\/([^\?])\?(.)$" => "/index.php?q=$1&$2", "^\/(.)$" => "/index.php?q=$1")
+
+        $HTTP["url"] =~ "^(\/sites\/(.)\/files\/)" {
+            $HTTP["url"] !~ "^(\/sites\/(.*)\/files\/imagecache\/)" {
+                fastcgi.server = ()
+                cgi.assign = ()
+                scgi.server = ()
+            }
+        }
+
+        url.access-deny = ( "~", ".engine", ".inc", ".info", ".install", ".module", ".profile", ".test", ".po", ".sh", ".sql", ".mysql", ".theme", ".tpl", ".xtmpl", "Entries", "Repository", "Root" )
+
+        }
+      }
+      EOF
+      ln -s /etc/lighttpd/sites-available/drupal /etc/lighttpd/sites-enabled
+      cd /var/www/drupal && find -type d -exec chmod 755 {} + && find -type f -exec chmod 644 {} +
+      chown -R :www *
+    fi
+    chmod -R g+w sites/default/files
+    chmod 444 sites/default/settings.php
+
+    if [ "$SYS" == 'systemd' ]; then
+      systemctl restart $srv
+    elif [ "$SYS" == 'init' ]; then
+      service $srv restart
+    fi} &> ~/deploycms_log
+  echo 'Done. Check deploycms_log for more details'
+;;
+
 
 esac
 
