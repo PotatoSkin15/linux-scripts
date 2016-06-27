@@ -59,6 +59,18 @@ fi
 echo 'Make sure you run flightcheck.sh and hydrationv2.sh first'
 sleep 2
 
+printf 'What is the sitename?'
+read -r sname
+
+printf 'What is your chosen username?'
+read -r uname
+
+printf 'What is your email?'
+read -r email
+
+printf 'Enter password for your account'
+read -s passwd
+
 choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 clear
 
@@ -69,7 +81,12 @@ case $choice in
 
 1)
   echo 'Installing WordPress...'
-  { # Creates base directory and downloads latest tarball
+  { # Get wp-cli first
+    curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    chmod +x wp-cli.phar
+    mv wp-cli.phar /usr/local/bin/wp
+
+    # Creates base directory and downloads latest tarball
     mkdir -p /var/www/wordpress
     wget https://wordpress.org/latest.tar.gz && tar xzf latest.tar.gz -C /var/www/wordpress
 
@@ -89,11 +106,13 @@ case $choice in
         sed -i "0,/put your unique phrase here/s/put your unique phrase here/$wp_salt/" /tmp/wordpress/wp-config.php;
     done
 
+    wp core install --allow-root --url=$sname --admin_user=$uname --admin_password=$passwd --admin_email=$email
+
     if [ "$srv" == 'apache2' || "$srv" == 'httpd' ]; then
       cat > /etc/$srv/sites-available/default << EOF
       <VirtualHost *:80>
       # Admin email, Server Name (domain name) and any aliases
-      ServerName localhost
+      ServerName $sname
 
       # Index file and Document Root (where the public files are located)
       DirectoryIndex index.html, index.php
@@ -134,7 +153,7 @@ case $choice in
       mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
       cat > /etc/nginx/sites-available/default << "EOF"
       server {
-	        listen 80 default_server;
+	        listen 80 $sname;
 	        listen [::]:80 default_server ipv6only=on;
 	        root /var/www/wordpress;
 	        index index.php index.html index.htm;
@@ -167,7 +186,7 @@ case $choice in
       find -type d -exec chmod 755 {} + && find -type f -exec chmod 644 {} +
     elif [ "$srv" == 'lighttpd' ]; then
       cat >> /etc/lighttpd/lighttpd.conf << "EOF"
-      $HTTP["host"] =~ "(^|www\.)example.com$" {
+      $HTTP["host"] =~ "(^|www\.)"$sname"$" {
         server.document-root = "/var/www/wordpress"
         accesslog.filename = "/var/log/lighttpd/example.com-access.log"
         server.error-handler-404 = "/index.php"
