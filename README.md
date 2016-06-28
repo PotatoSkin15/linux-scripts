@@ -3,6 +3,10 @@ General Linux scripts for everyday use
 
 Supported operating systems (currently): Ubuntu, Debian (BETA), CentOS/RHEL, Fedora, Oracle Linux, OpenSUSE, Amazon Linux AMI
 
+#### deploycms.sh
+
+Deploys PHP-based Content Management Systems including WordPress, Drupal 7 and 8, Joomla! and Concrete5.
+
 #### flightcheck.sh:
 
 Installs basic packages for server operating systems and updates software currently installed. Good after a fresh install to make sure everything is running smoothly and is up to date.
