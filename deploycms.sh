@@ -9,7 +9,6 @@ OS=`grep -Eiom 1 'CentOS|RedHat|ol|Ubuntu|debian|Fedora|suse|amzn' /proc/version
 SYS=`ps -p 1 | grep -Eiom 1 'systemd|init'`
 
 # Check for web server software and DB engine
-<<<<<<< HEAD
 srv=`ls /etc | grep -Eiom 1 'Apache2|httpd|nginx|lighttpd' | tr '[:upper:]' '[:lower:]'`
 db=`ls /var/lib | grep -Eiom 1 'mysql' | head -1`
 sqlroot=`dd if=/dev/urandom bs=1 count=32 2>/dev/null | base64 -w 0 | rev | cut -b 2- | rev`
@@ -31,17 +30,6 @@ options=(1 "WordPress" off
          3 "Drupal 8" off
          4 "Joomla!" off
          5 "Concrete5" off)
-=======
-srv=`ls /etc | grep -Eiom 1 'Apache2|httpd|nginx|lighttpd'`
-db=`ls /var/lib | grep -Eiom 1 'mysql|pgsql' | head -1`
-
-# Sets variables for dialog box
-cmd=(dialog --separate-output --checklist "Select software to install:" 22 76 16)
-options=(1 "WordPress" off
-         2 "Drupal 7" off
-         3 "Drupal 8" off
-         3 "Joomla!" off)
->>>>>>> parent of 76bb58d... Removed deploycms.sh as part of start of project
 
 if [ "$USER" != 'root' ]; then
   echo 'WARNING! This script should be run as root'
@@ -72,7 +60,6 @@ fi
 echo 'Make sure you run flightcheck.sh and hydrationv2.sh first'
 sleep 2
 
-<<<<<<< HEAD
 printf 'What is the sitename?'
 read -r sname
 
@@ -85,8 +72,6 @@ read -r email
 printf 'Enter password for your account'
 read -s passwd
 
-=======
->>>>>>> parent of 76bb58d... Removed deploycms.sh as part of start of project
 choices=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
 clear
 
@@ -96,7 +81,6 @@ do
 case $choice in
 
 1)
-<<<<<<< HEAD
 echo 'Installing WordPress...'
 { # Get wp-cli first
   curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
@@ -808,10 +792,3 @@ esac
 done
 
 fi
-=======
-  echo 'Installing WordPress...'
-  { # Creates base directory and downloads latest tarball
-    mkdir -p /var/www/wordpress
-    wget https://wordpress.org/latest.tar.gz && tar xzf latest.tar.gz -C /var/www/wordpress
-    
->>>>>>> parent of 76bb58d... Removed deploycms.sh as part of start of project
