@@ -24,12 +24,12 @@ chmod 600 /etc/.my.cnf
 echo 'MySQL root credentials stored in /etc/.my.cnf'
 
 # Sets variables for dialog box
-cmd=(dialog --separate-output --checklist "Select software to install:" 22 76 16)
+cmd=(dialog --separate-output --radiolist "Select software to install:" 22 76 16)
 options=(1 "WordPress" off
          2 "Drupal 7" off
          3 "Drupal 8" off
-         3 "Joomla!" off
-         4 "Concrete5" off)
+         4 "Joomla!" off
+         5 "Concrete5" off)
 
 if [ "$USER" != 'root' ]; then
   echo 'WARNING! This script should be run as root'
@@ -549,6 +549,123 @@ case $choice in
     fi
     chmod -R g+w sites/default/files
     chmod 444 $sname/sites/default/settings.php && chmod 444 $sname/sites/default/services.yml
+
+    if [ "$SYS" == 'systemd' ]; then
+      systemctl restart $srv
+    elif [ "$SYS" == 'init' ]; then
+      service $srv restart
+    fi} &> ~/deploycms_log
+  echo 'Done. Check deploycms_log for more details'
+;;
+
+4)
+  echo 'Installing Joomla!'
+  { # Installs Composer to install joomlatools console
+  if [ "$OS" == 'ubuntu' ]; then
+    apt-get update && apt-get install composer
+    composer global require joomlatools/console && export PATH="$PATH:~/.composer/vendor/bin" >> ~/.bashrc
+    source ~/.bashrc
+  else
+    cd /opt
+    mkdir composer
+    cd composer
+    curl -sS https://getcomposer.org/installer | php -d suhosin.executor.include.whitelist=phar
+    php -d suhosin.executor.include.whitelist=phar /opt/composer/composer.phar install
+    ln -s /opt/composer/composer.phar /usr/bin/composer
+    composer global require joomlatools/console && export PATH="$PATH:~/.composer/vendor/bin" >> ~/.bashrc
+    source ~/.bashrc
+  fi
+
+  # Creates MySQL DB and user
+  mysql -u root password $sqlroot
+  mysql -u root -p$sqlroot -e "create database joomla_db";
+  mysql -u root -p$sqlroot -e "grant all on joomla_db* to 'joomla_db_user'@'localhost' identified by '"$cmssql"'";
+
+  mkdir -p /var/www/$sname && cd /var/www/$sname
+  joomla site:create $sname --www=/var/www/$sname --mysql-database=joomla_db --mysql-login=joomla_db_user:$cmssql
+
+    if [ "$srv" == 'apache2' || "$srv" == 'httpd' ]; then
+      echo "<VirtualHost *:80>
+      ServerName $sname
+
+      DirectoryIndex index.html, index.php
+      DocumentRoot /var/www/$sname
+
+      <Directory />
+        Options FollowSymLinks
+        AllowOverride All
+        Order deny,allow
+        Deny from all
+        Satisfy all
+      </Directory>
+
+      AccessFileName .htaccess
+      <Directory /var/www/$sname>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Order allow,deny
+        allow from all
+      </Directory>
+
+      ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+      <Directory "/var/www/cgi-bin">
+        AllowOverride None
+        Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+        Order allow,deny
+        Allow from all
+      </Directory>
+
+      </VirtualHost>" >> /etc/$srv/sites-available/$sname
+      ln -s /etc/$srv/sites-available/$sname /etc/$srv/sites-enabled
+      cd /var/www/$sname && find -type d -exec chmod 755 {} + && find -type f -exec chmod 644 {} +
+      chown -R :apache *
+
+    elif [ "$srv" == 'nginx' ]; then
+      echo "server {
+        listen 80;
+        server_name $sname;
+        server_name_in_redirect off;
+        root /var/www/$sname;
+        index index.php index.html index.htm default.html default.htm;
+
+        location / {
+            try_files $uri $uri/ /index.php?$args;
+        }
+
+        # deny running scripts inside writable directories
+        location ~* /(images|cache|media|logs|tmp)/.*\.(php|pl|py|jsp|asp|sh|cgi)$ {
+            return 403;
+            error_page 403 /403_error.html;
+         }
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_intercept_errors on;
+            fastcgi_pass unix:/var/run/php5-fpm.sock;
+            fastcgi_index index.php;
+        }
+
+        location ~* \.(ico|pdf|flv)$ {
+            expires 1y;
+        }
+
+        location ~* \.(js|css|png|jpg|jpeg|gif|swf|xml|txt)$ {
+            expires 14d;
+        }
+      }" >> /etc/$srv/sites-available/$sname
+      ln -s /etc/$srv/sites-available/$sname /etc/$srv/sites-enabled
+      cd /var/www/$sname && find -type d -exec chmod 755 {} + && find -type f -exec chmod 644 {} +
+      chown -R :www-data *
+
+    elif [ "$srv" == 'lighttpd' ]; then
+      echo "$HTTP["host"] =~ "(^|www\.)"$sname"$" {
+          server.document-root = "/var/www/$sname"
+          accesslog.filename = "/var/log/lighttpd/$sname.access.log"
+          server.error-handler-404 = "/index.php"
+        }" >> /etc/lighttpd/lighttpd.conf
+        cd /var/www/$sname && find -type d -exec chmod 755 {} + && find -type f -exec chmod 644 {} +
+        chown -R :web *
+    fi
 
     if [ "$SYS" == 'systemd' ]; then
       systemctl restart $srv
