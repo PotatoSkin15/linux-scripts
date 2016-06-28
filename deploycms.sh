@@ -672,7 +672,8 @@ case $choice in
     elif [ "$SYS" == 'init' ]; then
       service $srv restart
     fi} &> ~/deploycms_log
-  echo 'Done. Check deploycms_log for more details'
+  echo 'Done. Joomla default credentials are admin/admin.'
+  echo 'Check deploycms_log for more details'
 ;;
 
 esac
