@@ -128,7 +128,7 @@ else
 	} &> ~/flightcheck_log
 	echo 'Done. Check flightcheck_log for more details'
 
-	elif [ "$OS" == 'ubuntu' || "$OS" == 'debian']; then
+	elif [[ "$OS" == 'ubuntu' || "$OS" == 'debian' ]]; then
 	echo 'Processing...'
 	{
 		# Update everything currently installed
