@@ -90,7 +90,7 @@ else
 		dnf check-update && dnf -y update
 
 		# Installs tools needed to parse yum commands to dnf
-		dnf install python-dnf-plugins-extras-migrate && dnf-2 migrate
+		dnf -y install python-dnf-plugins-extras-migrate && dnf-2 migrate
 
 		# Turn off SELinux for now
 		setenforce 0
